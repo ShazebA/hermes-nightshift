@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import json
 import shlex
 import shutil
@@ -39,6 +40,12 @@ def _now() -> str:
 
 def _gh(args) -> Gh:
     return FixtureGh(args.fixtures) if getattr(args, "fixtures", None) else Gh()
+
+
+def _scoped(args, cfg: Config) -> Config:
+    """`--repo OWNER/REPO`: poll only that configured repo. An unknown repo raises ConfigError."""
+    repo = getattr(args, "repo", None)
+    return dataclasses.replace(cfg, repos=[cfg.repo(repo)]) if repo else cfg
 
 
 # ------------------------------------------------------------------ poll / tick
@@ -78,7 +85,7 @@ def cmd_poll(args, cfg: Config) -> int:
     out_dir = Path(args.briefs_dir).resolve() if args.briefs_dir else None
     if args.dry_run and out_dir is None:
         out_dir = Path("nightshift-dry-run").resolve()
-    report = run_once(cfg, _gh(args), dry_run=args.dry_run, briefs_dir=out_dir)
+    report = run_once(_scoped(args, cfg), _gh(args), dry_run=args.dry_run, briefs_dir=out_dir)
     if args.json:
         print(json.dumps({
             "new": [{"id": h.incident.id, "repo": h.incident.repo, "kind": h.incident.kind,
@@ -103,7 +110,7 @@ def cmd_poll(args, cfg: Config) -> int:
 def cmd_tick(args, cfg: Config) -> int:
     """Output contract for a Hermes cron `--script` job: a tiny summary the triage skill acts
     on, ending with {"wakeAgent": false} when no new failure needs the model."""
-    report = run_once(cfg, _gh(args))
+    report = run_once(_scoped(args, cfg), _gh(args))
     if report.blind:
         # Non-zero exit makes Hermes deliver a failure notice instead of a silent quiet night.
         print("nightshift: every watcher failed; nothing was observed this run", file=sys.stderr)
@@ -337,10 +344,12 @@ def build_parser() -> argparse.ArgumentParser:
     poll.add_argument("--fixtures", help="replay recorded gh output from this directory")
     poll.add_argument("--briefs-dir", help="override briefs_dir")
     poll.add_argument("--json", action="store_true")
+    poll.add_argument("--repo", metavar="OWNER/REPO", help="poll only this configured repo")
     poll.set_defaults(func=cmd_poll)
 
     tick = sub.add_parser("tick", help="poll, formatted for a Hermes cron --script job")
     tick.add_argument("--fixtures", help=argparse.SUPPRESS)
+    tick.add_argument("--repo", metavar="OWNER/REPO", help="poll only this configured repo")
     tick.set_defaults(func=cmd_tick)
 
     cl = sub.add_parser("classify", help="record a model/human classification on a brief")

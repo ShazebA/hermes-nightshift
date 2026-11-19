@@ -3,6 +3,7 @@
 import json
 import sys
 import types
+from pathlib import Path
 
 import pytest
 from conftest import NOW
@@ -185,3 +186,28 @@ def test_gh_outage_is_loud_not_a_quiet_night(tmp_path, capsys):
     cli.main(["-c", c, "digest"])
     out = capsys.readouterr().out
     assert "Watcher errors" in out and "no fixture recorded" in out
+
+
+def test_tick_and_poll_repo_scope(tmp_path, capsys):
+    c = _write_cfg(tmp_path)
+    p = Path(c)
+    p.write_text(p.read_text().replace("repos:\n", "repos:\n  - name: acme/api\n"))
+    assert cli.main(["-c", c, "tick", "--repo", "acme/api", *FIX]) == 0
+    out = capsys.readouterr().out
+    assert out.startswith("NIGHTSHIFT: 3 new failure brief(s)")
+    assert "repo=acme/api" in out and "repo=acme/webapp" not in out
+    # webapp was not polled, so its failures are still new to an unscoped poll
+    assert cli.main(["-c", c, "poll", "--json", *FIX]) == 0
+    new = json.loads(capsys.readouterr().out)["new"]
+    assert {h["repo"] for h in new} == {"acme/webapp"}
+    assert cli.main(["-c", c, "poll", "--repo", "acme/webapp", "--json", *FIX]) == 0
+    assert json.loads(capsys.readouterr().out)["new"] == []
+
+
+@pytest.mark.parametrize("command", ["tick", "poll"])
+def test_unknown_repo_is_a_clear_error(tmp_path, capsys, command):
+    c = _write_cfg(tmp_path)
+    assert cli.main(["-c", c, command, "--repo", "acme/nope", *FIX]) == 2
+    err = capsys.readouterr().err
+    assert "repo 'acme/nope' is not in the config" in err and "configured repos: acme/webapp" in err
+    assert not (tmp_path / "state" / "state.json").exists()

@@ -1,0 +1,67 @@
+"""Hermes webhook route filter for Nightshift (installed by scripts/install-hermes.sh).
+
+Used as `hermes webhook subscribe nightshift --script nightshift-webhook-filter.py ...`.
+Hermes runs it with its own interpreter, passes the GitHub payload as JSON on stdin, and drops
+the event when stdout is empty or the exit code is non-zero. So this script prints nothing for
+events Nightshift would ignore anyway, and the `nightshift-watch` cron job is only fired for:
+
+  workflow_run       action=completed, conclusion in failure / timed_out / startup_failure
+  deployment_status  deployment_status.state in failure / error
+
+For a kept event it prints a small JSON object, which replaces the payload Hermes passes on as
+per-run context. That keeps commit messages and other free text out of the model prompt; the
+cron job's `nightshift tick` re-reads everything it needs through `gh` anyway.
+
+Anything else (unknown shape, unparseable JSON) is dropped: the 15 minute poll is the backstop.
+Standard library only, no `match`, so it runs on whatever Python Hermes ships.
+"""
+
+import json
+import sys
+
+FAILED_CONCLUSIONS = ("failure", "timed_out", "startup_failure")
+FAILED_DEPLOY_STATES = ("failure", "error")
+
+
+def decide(payload):
+    """Return the object to print for a kept event, or None to drop it."""
+    if not isinstance(payload, dict):
+        return None
+    repo = (payload.get("repository") or {}).get("full_name")
+    # deployment_status first: GitHub embeds a `workflow_run` object in deployment_status
+    # payloads for Actions-driven deployments, so the key alone does not identify the event.
+    ds = payload.get("deployment_status")
+    if isinstance(ds, dict):
+        state = ds.get("state")
+        if state not in FAILED_DEPLOY_STATES:
+            return None
+        dep = payload.get("deployment") or {}
+        return {"event": "deployment_status", "repo": repo, "state": state,
+                "environment": ds.get("environment") or dep.get("environment"),
+                "sha": dep.get("sha"), "url": ds.get("target_url") or ds.get("log_url")}
+    run = payload.get("workflow_run")
+    if isinstance(run, dict):
+        if payload.get("action") != "completed":
+            return None
+        conclusion = run.get("conclusion")
+        if conclusion not in FAILED_CONCLUSIONS:
+            return None
+        return {"event": "workflow_run", "repo": repo, "conclusion": conclusion,
+                "workflow": run.get("name"), "branch": run.get("head_branch"),
+                "sha": run.get("head_sha"), "url": run.get("html_url")}
+    return None
+
+
+def main():
+    try:
+        payload = json.load(sys.stdin)
+    except ValueError:
+        return 0  # no output: Hermes drops the event
+    keep = decide(payload)
+    if keep is not None:
+        sys.stdout.write(json.dumps(keep) + "\n")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

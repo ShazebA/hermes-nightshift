@@ -1,0 +1,25 @@
+{
+  "zen": "Keep it logically awesome.",
+  "hook_id": 1,
+  "hook": {
+    "type": "Repository",
+    "events": [
+      "workflow_run"
+    ]
+  },
+  "repository": {
+    "id": 100001,
+    "name": "webapp",
+    "full_name": "acme/webapp",
+    "private": false,
+    "html_url": "https://github.com/acme/webapp",
+    "owner": {
+      "login": "acme",
+      "type": "Organization"
+    }
+  },
+  "sender": {
+    "login": "octo-dev",
+    "type": "User"
+  }
+}
