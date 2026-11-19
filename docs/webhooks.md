@@ -41,6 +41,8 @@ The filter keeps only these events:
 
 Everything else is dropped, including payloads it can't parse or doesn't recognise. The poll catches anything the filter misses.
 
+The filter can't read the Nightshift config, so it doesn't filter by branch. A failed run on a PR branch still fires the job. The tick only watches configured branches, so it then ends with `{"wakeAgent": false}`. That costs a few `gh` calls but no model run.
+
 - **Event type.** Hermes does not pass the `X-GitHub-Event` header to the script, so the filter works out the event from the payload. It checks `deployment_status` first, because GitHub embeds the deploying `workflow_run` inside deployment-status payloads for Actions-driven deploys.
 - **Output.** For a kept event, the filter prints a small JSON object: event, repo, conclusion or state, workflow or environment, branch, sha and URL. That object replaces the payload Hermes hands to the job as per-run context. Commit messages, author emails and other free text from GitHub never reach the model prompt or the cron prompt-injection scanner. The tick reads what it needs through `gh` anyway.
 - **Dependencies.** The filter uses only the standard library, because it runs inside Hermes's interpreter, not Nightshift's.
@@ -62,4 +64,4 @@ hermes webhook subscribe nightshift-webapp --events workflow_run,deployment_stat
     --cron-job nightshift-watch-webapp --script nightshift-webhook-filter.py
 ```
 
-Then point that repo's GitHub webhook at `/webhooks/nightshift-webapp`. Keep the repo in the shared config, because `--repo` only accepts configured repos. The main job's slow poll then acts as its backstop. Both jobs share one dedupe state, so a failure that one job has already briefed is skipped by the other.
+Then point that repo's GitHub webhook at `/webhooks/nightshift-webapp`. Keep the repo in the shared config, because `--repo` only accepts configured repos. The main job's slow poll then acts as its backstop. Both jobs share one dedupe state, so a failure that one job has already briefed is skipped by the other. The exception is when both run at the same moment, so keep the main poll slow.
