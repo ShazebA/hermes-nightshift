@@ -15,6 +15,8 @@ Hermes's root `AGENTS.md` sets the order of preference for new capability. It ru
 
 Consequences:
 
+- **Managed llama.cpp and cron.** A job created without `--provider` snapshots the provider as `custom`. That path sends no API key, and the managed llama-server requires the key it persisted, so the agent run fails with HTTP 401. Pinning `--provider llamacpp --model <model>` routes the job through Hermes's managed-runtime resolution. This was found in a live run, and it looks like a Hermes bug worth reporting upstream.
+
 - The cron scripts are bash shims with absolute paths to `nightshift` and the config, rendered by `scripts/install-hermes.sh`. A `.py` cron script would run under Hermes's interpreter and could not import Nightshift. The gateway's environment may also lack your shell `PATH`.
 - Nightshift talks to kanban only through the CLI. It never imports `hermes_cli`, because Hermes's internal module paths are not an API.
 - **Memory.** Hermes's `cron/AGENTS.md` says cron sessions skip memory, but `cron/scheduler.py` currently passes `skip_memory=False` with `skip_background_review=True`. Nothing learns automatically from a cron run either way. So lessons live in Nightshift's own per-repo file, which is deterministic, testable and diffable. The skill also asks the model to mirror each lesson into Hermes `memory` so interactive sessions benefit.

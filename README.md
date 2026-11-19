@@ -83,7 +83,7 @@ scripts/install-hermes.sh            # shows what it would copy into ~/.hermes; 
 scripts/install-hermes.sh --apply    # copies the skill and the two cron scripts
 ```
 
-The installer prints the `hermes cron create` commands for the watch and digest jobs, and never runs them for you. Use `DELIVER=telegram scripts/install-hermes.sh` to print a digest command that targets a gateway platform. Cron jobs need the Hermes gateway running (`hermes gateway install`).
+The installer prints the `hermes cron create` commands for the watch and digest jobs, and never runs them for you. On Hermes's managed llama.cpp runtime (`model.provider: llamacpp`), pin the watch job with `hermes cron edit <id> --provider llamacpp --model <model>`. Without the pin, Hermes stores the job's provider as `custom`, and the managed server rejects the request with HTTP 401. Use `DELIVER=telegram scripts/install-hermes.sh` to print a digest command that targets a gateway platform. Cron jobs need the Hermes gateway running (`hermes gateway install`).
 
 ### Optional: AetherBus
 

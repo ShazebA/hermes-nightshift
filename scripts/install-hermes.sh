@@ -61,6 +61,12 @@ Then register the jobs (run these yourself):
   hermes cron create "0 7 * * *" --name nightshift-digest \\
       --script nightshift-digest.sh --no-agent --deliver $DELIVER
 
+If your model is Hermes's managed llama.cpp runtime (model.provider: llamacpp), pin the watch
+job's provider. Otherwise Hermes snapshots it as "custom", sends no key, and the managed
+llama-server answers HTTP 401:
+
+  hermes cron edit <nightshift-watch id> --provider llamacpp --model <model.default>
+
 Optional dedicated kanban board (set kanban.board: nightshift in your config):
 
   hermes kanban boards create nightshift --name "Nightshift" --description "CI/deploy triage briefs"
