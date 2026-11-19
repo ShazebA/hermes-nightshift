@@ -89,7 +89,9 @@ class Config:
         for r in self.repos:
             if r.name == name:
                 return r
-        raise ConfigError(f"repo {name!r} is not in the config")
+        known = ", ".join(r.name for r in self.repos)
+        where = f" ({self.source_path})" if self.source_path else ""
+        raise ConfigError(f"repo {name!r} is not in the config{where}; configured repos: {known}")
 
 
 def _expand(p: str, base: Path) -> Path:

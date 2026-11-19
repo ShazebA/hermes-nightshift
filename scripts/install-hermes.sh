@@ -2,9 +2,11 @@
 # Wire Nightshift into a local Hermes Agent install.
 #
 #   scripts/install-hermes.sh                # print what would change (default, touches nothing)
-#   scripts/install-hermes.sh --apply        # copy the skill + cron scripts into $HERMES_HOME
+#   scripts/install-hermes.sh --apply        # copy the skill, cron scripts and webhook filter
+#                                            # into $HERMES_HOME
 #
-# It never creates cron jobs or kanban boards itself; it prints the exact `hermes` commands.
+# It never creates cron jobs, webhook routes or kanban boards itself; it prints the exact
+# `hermes` commands.
 # Options (env): HERMES_HOME (default ~/.hermes), NIGHTSHIFT_CONFIG (default
 # ~/.config/nightshift/nightshift.yaml), DELIVER (digest target, default local).
 set -euo pipefail
@@ -39,12 +41,15 @@ echo "Files:"
 echo "  $ROOT/hermes/skills/nightshift-triage/SKILL.md -> $SKILL_DST/SKILL.md"
 echo "  $HH/scripts/nightshift-watch.sh"
 echo "  $HH/scripts/nightshift-digest.sh"
+echo "  $HH/scripts/nightshift-webhook-filter.py   (optional webhook trigger, see docs/webhooks.md)"
 
 if [[ $APPLY == 1 ]]; then
   mkdir -p "$SKILL_DST" "$HH/scripts"
   cp "$ROOT/hermes/skills/nightshift-triage/SKILL.md" "$SKILL_DST/SKILL.md"
   render "$ROOT/hermes/scripts/nightshift-watch.sh.tmpl" > "$HH/scripts/nightshift-watch.sh"
   render "$ROOT/hermes/scripts/nightshift-digest.sh.tmpl" > "$HH/scripts/nightshift-digest.sh"
+  # Run by Hermes with its own Python (by extension, not shebang); standard library only.
+  cp "$ROOT/hermes/scripts/nightshift-webhook-filter.py.tmpl" "$HH/scripts/nightshift-webhook-filter.py"
   chmod +x "$HH/scripts/nightshift-watch.sh" "$HH/scripts/nightshift-digest.sh"
   echo "  (written)"
 else
@@ -66,6 +71,15 @@ job's provider. Otherwise Hermes snapshots it as "custom", sends no key, and the
 llama-server answers HTTP 401:
 
   hermes cron edit <nightshift-watch id> --provider llamacpp --model <model.default>
+
+Optional faster trigger: fire nightshift-watch on GitHub webhooks (needs a public URL for the
+Hermes gateway, and the nightshift-watch job above must exist first). The filter drops
+successful runs and deploys so they never wake the job. Keep the 15m poll as a backstop.
+See docs/webhooks.md:
+
+  hermes webhook subscribe nightshift --events workflow_run,deployment_status \\
+      --cron-job nightshift-watch --script nightshift-webhook-filter.py \\
+      --description "Nightshift: run triage when GitHub reports a failed run or deploy"
 
 Optional dedicated kanban board (set kanban.board: nightshift in your config):
 
