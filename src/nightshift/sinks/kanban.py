@@ -40,11 +40,40 @@ def card_body(brief: dict[str, Any], md_path: Path) -> str:
     )
 
 
+def _base(cfg: KanbanConfig) -> list[str]:
+    # --board is a top-level kanban flag, so it goes before the subcommand.
+    return [cfg.hermes_bin, "kanban"] + (["--board", cfg.board] if cfg.board else [])
+
+
+def claim_card(cfg: KanbanConfig, task_id: str, agent: str, md_path: Path,
+               run=subprocess.run) -> tuple[bool, str]:
+    """Record a claim on the card, then unblock it.
+
+    Flags confirmed against hermes_cli/kanban_parser.py: `comment <task_id> <text...> --author`
+    and `unblock [--reason] <task_ids...>`. Unblock moves the card to `ready` (or `todo` while
+    parents are open); if the card has an assignee, a running gateway may dispatch it, so the
+    comment says the work is happening outside Hermes.
+    """
+    base = _base(cfg)
+    text = (f"Claimed by {agent} via `nightshift claim`. The fix is happening outside Hermes; "
+            f"do not dispatch a worker for this card. Brief: {md_path}")
+    steps = [("comment", base + ["comment", str(task_id), text, "--author", "nightshift"]),
+             ("unblock", base + ["unblock", str(task_id)])]
+    for name, argv in steps:
+        try:
+            proc = run(argv, capture_output=True, text=True, timeout=60)
+        except (OSError, subprocess.TimeoutExpired) as e:
+            return False, f"kanban {name} failed: {e}"
+        if proc.returncode != 0:
+            return False, f"kanban {name} failed: {(proc.stderr or proc.stdout).strip()[:300]}"
+    return True, ""
+
+
 def create_card(cfg: KanbanConfig, brief: dict[str, Any], md_path: Path,
                 run=subprocess.run) -> KanbanResult:
     if not cfg.enabled:
         return KanbanResult("disabled")
-    base = [cfg.hermes_bin, "kanban"] + (["--board", cfg.board] if cfg.board else [])
+    base = _base(cfg)
     title = f"[nightshift] {brief['repo']}: {brief['title']}"
     args = base + ["create", title, "--body", card_body(brief, md_path),
                    "--idempotency-key", f"nightshift:{brief['repo']}:{brief['id']}",
