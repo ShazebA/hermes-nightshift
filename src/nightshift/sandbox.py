@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 from .config import RepoConfig, SandboxConfig
+from .triage import ANSI
 
 
 def docker_argv(cfg: SandboxConfig, image: str, workdir: Path, command: str) -> list[str]:
@@ -47,9 +48,10 @@ def run_repro(brief: dict[str, Any], repo: RepoConfig, cfg: SandboxConfig,
             if p.returncode != 0:
                 raise RuntimeError(f"{shlex.join(argv)} failed: {p.stderr.strip()[:300]}")
         try:
-            p = run(docker_argv(cfg, image, wd, inner), capture_output=True, text=True,
-                    timeout=cfg.timeout_seconds)
-            code, out = p.returncode, (p.stdout + p.stderr)
+            # One merged stream keeps test output and npm noise in their real order.
+            p = run(docker_argv(cfg, image, wd, inner), stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                    text=True, timeout=cfg.timeout_seconds)
+            code, out = p.returncode, p.stdout or ""
         except subprocess.TimeoutExpired as e:
             code, out = None, f"timed out after {cfg.timeout_seconds}s\n{e.stdout or ''}"
     return {
@@ -58,5 +60,5 @@ def run_repro(brief: dict[str, Any], repo: RepoConfig, cfg: SandboxConfig,
         # A repro "reproduces" a red build when the command fails the same way CI did.
         "reproduced": None if code is None else code != 0,
         "ran_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "output_tail": [ln for ln in str(out).splitlines() if ln.strip()][-40:],
+        "output_tail": [ANSI.sub("", ln) for ln in str(out).splitlines() if ln.strip()][-40:],
     }
