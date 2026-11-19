@@ -1,0 +1,47 @@
+# Hermes Nightshift config. Copy to ./nightshift.yaml or ~/.config/nightshift/nightshift.yaml
+# (both are git-ignored here, so private repo names never land in a commit).
+# Relative paths resolve against this file's directory.
+
+# Where state, briefs, lessons and digests live.
+state_dir: ~/.local/share/nightshift
+# briefs_dir: ~/.local/share/nightshift/briefs   # default: <state_dir>/briefs
+
+# How many recent workflow runs per branch to look back through (finds last green).
+lookback_runs: 30
+
+repos:
+  - name: your-org/your-app            # owner/repo, as `gh` understands it
+    branches: [main]                   # CI is watched on these; they are never "stale"
+    watch: [ci, deployments, issues, pull_requests, stale_branches]
+    path: ~/code/your-app              # optional local clone, used for sandbox repro
+    repro_setup: npm ci                # prepended to every repro command
+    build_command: npm run build       # how to reproduce a failed deployment
+    stale_branch_days: 30
+    # sandbox_image: node:22-bookworm  # per-repo override of sandbox.image
+    lessons:                           # static hints; learned ones live in <state_dir>/lessons/
+      - pattern: '(column|relation) \S+ does not exist'
+        note: CI fails when Supabase migrations aren't applied; run them before the tests.
+
+  # A repo with only CI watched:
+  # - name: your-org/your-lib
+  #   watch: [ci]
+
+kanban:
+  enabled: true          # one card per failure brief via `hermes kanban create`
+  # board: nightshift    # default: Hermes's current board
+  triage: true           # park cards in the triage column for a human or specifier
+  # assignee: coder      # Hermes profile to assign cards to
+  hermes_bin: hermes
+
+aetherbus:
+  enabled: false         # optional; needs `pip install 'hermes-nightshift[aetherbus]'`
+  url: nats://localhost:4222
+  # Must sit under AetherBus's default stream subjects (aetherbus.> or dev.aetherbus.>).
+  topic: dev.aetherbus.nightshift.brief.v1
+  source: aetherbus://nightshift
+
+sandbox:
+  enabled: false         # `nightshift repro <id> --execute` refuses to run until true
+  image: node:22-bookworm
+  network: bridge        # "none" is safer but breaks `npm ci`
+  timeout_seconds: 900

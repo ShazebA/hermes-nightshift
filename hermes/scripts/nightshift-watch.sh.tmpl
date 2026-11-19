@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Hermes cron script for the `nightshift-watch` job (rendered by scripts/install-hermes.sh).
+# stdout is injected into the agent prompt; the last line is {"wakeAgent": false} when there
+# is nothing new, so the model only runs when a new failure brief exists.
+set -euo pipefail
+export PATH="@@PATH_PREFIX@@:${PATH}"
+exec "@@NIGHTSHIFT@@" -c "@@CONFIG@@" tick

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Hermes cron script for the `nightshift-digest` job (rendered by scripts/install-hermes.sh).
+# Runs with --no-agent: stdout is delivered verbatim to the job's --deliver target.
+set -euo pipefail
+export PATH="@@PATH_PREFIX@@:${PATH}"
+exec "@@NIGHTSHIFT@@" -c "@@CONFIG@@" digest
