@@ -103,3 +103,31 @@ def test_full_triage_from_fixtures(gh):
     dep = next(i for i in found if i.kind == "deploy_failure")
     td = triage(gh, dep, RepoConfig(name=REPO, build_command="npm run build"), [])
     assert td.repro.endswith("npm run build") and td.suspected[0]["path"] == "src/lib/entries.ts"
+
+
+def test_last_green_outside_lookback_is_found_with_a_targeted_query(tmp_path):
+    import json
+
+    import yaml
+
+    from nightshift.gh import FixtureGh, fixture_key
+    first_red = {"databaseId": 50, "headSha": "b" * 40, "url": "u50", "createdAt": "2026-11-19T05:00:00Z",
+                 "workflowDatabaseId": 7}
+    inc = _inc(workflow="Nightly", branch="main", first_red=first_red, latest_red=first_red, last_green=None)
+    args = ["run", "list", "-R", REPO, "--workflow", "7", "--branch", "main", "--status", "success",
+            "-L", "10", "--json", "databaseId,headSha,url,createdAt"]
+    (tmp_path / "green.json").write_text(json.dumps([
+        {"databaseId": 60, "headSha": "c" * 40, "url": "u60", "createdAt": "2026-11-19T06:00:00Z"},  # after: a fix
+        {"databaseId": 40, "headSha": "a" * 40, "url": "u40", "createdAt": "2026-11-18T05:00:00Z"},
+    ]))
+    (tmp_path / "log.txt").write_text("")
+    (tmp_path / "compare.json").write_text(json.dumps({"commits": [], "files": [], "html_url": "c"}))
+    (tmp_path / "manifest.yaml").write_text(yaml.safe_dump({"commands": {
+        fixture_key(args, REPO): "green.json",
+        fixture_key(["run", "view", "50", "-R", REPO, "--log-failed"], REPO): "log.txt",
+        fixture_key(["api", f"repos/{REPO}/compare/{'a' * 40}...{'b' * 40}"], REPO): "compare.json",
+    }}))
+    inc.repo = REPO
+    t = triage(FixtureGh(tmp_path), inc, RepoConfig(name=REPO), [])
+    assert inc.data["last_green"]["databaseId"] == 40
+    assert "last green" not in " ".join(t.errors)

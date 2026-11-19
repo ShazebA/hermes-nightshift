@@ -183,7 +183,10 @@ def render_markdown(b: dict[str, Any]) -> str:
     out += ["", "## Suspected culprit", ""]
     if cu["commits"]:
         out.append("Commits between last green and first red:")
-        out += [f"- `{x['sha'][:7]}` {x['title']} ({x.get('author') or '?'})" for x in cu["commits"]]
+        shown = cu["commits"][-15:]  # newest last; the full list stays in the JSON
+        if len(cu["commits"]) > len(shown):
+            out.append(f"- … {len(cu['commits']) - len(shown)} earlier commit(s), see the compare link")
+        out += [f"- `{x['sha'][:7]}` {x['title']} ({x.get('author') or '?'})" for x in shown]
     else:
         out.append("No commit range available (no earlier green run in the lookback window).")
     if cu["suspected_files"]:

@@ -1,0 +1,33 @@
+smokeshow	UNKNOWN STEP	﻿2026-11-18T19:06:55.9413030Z Current runner version: '2.338.2'
+smokeshow	UNKNOWN STEP	2026-11-18T19:06:55.9440067Z ##[group]Runner Image Provisioner
+smokeshow	UNKNOWN STEP	2026-11-18T19:06:55.9440983Z Hosted Compute Agent
+smokeshow	UNKNOWN STEP	2026-11-18T19:06:58.9274266Z ##[group]Run echo "$GITHUB_CONTEXT"
+smokeshow	UNKNOWN STEP	2026-11-18T19:06:58.9275361Z [36;1mecho "$GITHUB_CONTEXT"[0m
+smokeshow	UNKNOWN STEP	2026-11-18T19:06:58.9299129Z shell: /usr/bin/bash -e {0}
+smokeshow	UNKNOWN STEP	2026-11-18T19:06:59.1120421Z ##[group]Run actions/checkout@v7.0.1
+smokeshow	UNKNOWN STEP	2026-11-18T19:06:59.1121419Z with:
+smokeshow	UNKNOWN STEP	2026-11-18T19:06:59.1122120Z   persist-credentials: false
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8130299Z ##[group]Run actions/download-artifact@v8.0.2
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8130520Z with:
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8130660Z   name: coverage-html
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8130810Z   path: htmlcov
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8132716Z   github-token: ***
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8132876Z   run-id: 44375322280
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8133035Z   merge-multiple: false
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8133208Z   repository: fastapi/fastapi
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8133391Z   skip-decompress: false
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8133560Z   digest-mismatch: error
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8133711Z env:
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8133897Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.18/x64
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8134208Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.18/x64/lib/pkgconfig
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8134513Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8134790Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8135074Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8135372Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.18/x64/lib
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8135766Z   UV_PYTHON_INSTALL_DIR: /home/runner/work/_temp/uv-python-dir
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.8135994Z ##[endgroup]
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:09.9212989Z Downloading single artifact
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:10.1598342Z ##[error]Unable to download artifact(s): Artifact not found for name: coverage-html
+smokeshow	UNKNOWN STEP	        Please ensure that your artifact is not expired and the artifact was uploaded using a compatible version of toolkit/upload-artifact.
+smokeshow	UNKNOWN STEP	        For more information, visit the GitHub Artifacts FAQ: https://github.com/actions/toolkit/blob/main/packages/artifact/docs/faq.md
+smokeshow	UNKNOWN STEP	2026-11-18T19:07:10.2082300Z Post job cleanup.

@@ -89,6 +89,26 @@ def load_lessons(state_dir: Path, repo: str) -> list[Lesson]:
             for x in yaml.safe_load(p.read_text()) or []]
 
 
+def lesson_problems(pattern: str, incident_text: str | None = None) -> tuple[list[str], list[str]]:
+    """(errors, warnings) for a proposed lesson regex. Errors block saving: a lesson that
+    matches everything pollutes every brief, and one that misses its own incident never fires."""
+    errors, warnings = [], []
+    try:
+        rx = re.compile(pattern, re.I | re.M)
+    except re.error as e:
+        return [f"not a valid regex: {e}"], []
+    if rx.search("") is not None or len(pattern.strip()) < 6:
+        errors.append("too broad: it matches (almost) anything; use a distinctive phrase from the error")
+    if incident_text is not None and not rx.search(incident_text):
+        errors.append("does not match the failing log of the incident it came from")
+    if re.search(r"[0-9a-f]{7,}|\d{4,}|\d{2}:\d{2}", pattern):
+        warnings.append("contains a SHA, timestamp or long number that will differ next time")
+    if re.search(r"[A-Za-z]\w*\\?\.[A-Za-z]\w*|[a-z]+_[a-z]+", pattern):
+        warnings.append("names a specific identifier; consider \\S+ in its place so the lesson "
+                        "covers the whole class of failure")
+    return errors, warnings
+
+
 def add_lesson(state_dir: Path, repo: str, pattern: str, note: str, source: str = "learned",
                incident: str | None = None) -> Lesson:
     re.compile(pattern)

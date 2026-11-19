@@ -24,15 +24,23 @@ INFRA_PATTERNS = [
     r"Could not resolve host", r"ECONNRESET", r"ETIMEDOUT", r"EAI_AGAIN",
     r"toomanyrequests|rate limit exceeded|API rate limit", r"50[234] (Bad Gateway|Service Unavailable|Gateway Time)",
     r"npm ERR! network", r"Unable to locate executable file", r"Error: Process completed with exit code 137",
+    r"githubstatus\.com", r"failed with 50[234]\b", r"Artifact not found for name",
+    r"Unable to download artifact", r"Internal Server Error.{0,40}(api\.github|ghcr\.io|registry)",
 ]
 FLAKY_PATTERNS = [
     r"Test timed out in \d+ms", r"Timeout of \d+ms exceeded", r"exceeded timeout of \d+",
-    r"flaky", r"socket hang up", r"Navigation timeout",
+    r"socket hang up", r"Navigation timeout", r"Test timeout of \d+ms exceeded",
 ]
+# Roll-up jobs ("all checks passed", re-actors/alls-green) fail only because another job failed.
+AGGREGATOR_RE = re.compile(
+    r"alls?-green|all[ -]?(required|checks|tests|jobs)|required[ -]checks|check[ -]?status", re.I)
+POST_JOB = ("Post job cleanup", "Cleaning up orphan processes", "Terminate orphan process",
+            "Removing credentials config")
 SIGNATURE_PATTERNS = [
     r"^\s*(FAIL|FAILED)\s+.+", r"\bAssertionError\b.*", r"^\s*(×|✗|✕)\s+.+",
-    r"error TS\d+:.*", r"\b(Type|Reference|Syntax)Error:.*", r"^\s*Error:.*",
-    r"npm ERR! .*", r"##\[error\].*",
+    r"error TS\d+:.*", r"^\s*error(\[E\d+\])?: (?!instrumented|could not compile|aborting).+",
+    r"\b(Type|Reference|Syntax)Error:.*", r"^\s*Error:.*",
+    r"npm ERR! .*", r"##\[error\](?!Process completed with exit code).*",
 ]
 TEST_LOCATORS = [
     # (regex, runner) — vitest/jest "FAIL path > name", pytest "FAILED path::test"
@@ -52,38 +60,70 @@ class LogDigest:
     excerpt: list[str] = field(default_factory=list)
     signature: str = ""
     error: str = ""
+    aggregator: bool = False  # only a roll-up job failed; the real failure is elsewhere in the run
+    segment: list[str] = field(default_factory=list)  # failing step's lines, cut at the error
     test_target: str = ""
     runner: str = ""
     paths: list[str] = field(default_factory=list)
 
 
 def parse_failed_log(text: str) -> LogDigest:
-    """Parse `gh run view --log-failed` output (``job<TAB>step<TAB>timestamp line``)."""
-    rows = []
+    """Parse `gh run view --log-failed` output (``job<TAB>step<TAB>timestamp line``).
+
+    Recent `gh` versions label every line ``UNKNOWN STEP`` and include the whole job, so steps
+    are recovered from the ``##[group]Run <cmd>`` headers GitHub prints at the start of each
+    step. The failing step is the one holding the job's first ``##[error]``; roll-up jobs
+    (alls-green, "all required checks") are only used when nothing else failed.
+    """
+    jobs: dict[str, list[tuple[str, str]]] = {}
     for raw in text.splitlines():
         parts = raw.split("\t", 2)
         if len(parts) < 3:
             continue
         job, step, line = parts
-        rows.append((job, step, ANSI.sub("", TS.sub("", line)).rstrip()))
-    if not rows:
+        jobs.setdefault(job, []).append((step, ANSI.sub("", TS.sub("", line)).rstrip()))
+    if not jobs:
         return LogDigest()
-    # The failing step is the one that holds the ##[error] marker; default to the last step.
-    err_rows = [r for r in rows if "##[error]" in r[2]]
-    job, step = (err_rows[-1] if err_rows else rows[-1])[:2]
-    lines = [ln for j, s, ln in rows if j == job and s == step]
+    failing = [(j, _failing_step(rows)) for j, rows in jobs.items()]
+    failing = [(j, st) for j, st in failing if st is not None]
+    if not failing:
+        last_job = list(jobs)[-1]
+        failing = [(last_job, ("", [ln for _, ln in jobs[last_job]]))]
+    real = [f for f in failing if not _is_aggregator(f[0], f[1][1])]
+    job, (step, lines) = (real or failing)[0]
     d = LogDigest(job=job, step=step, command=_run_command(lines))
-    body = _drop_groups(lines)
+    d.aggregator = not real
+    body = [ln for ln in _drop_groups(lines) if not ln.startswith(("##[start-action", "##[end-action"))]
+    d.segment = body
     d.excerpt = _excerpt(body)
     d.signature = signature(body)
     d.error = first_error(body)
     for rx, runner in TEST_LOCATORS:
         m = next((rx.search(ln) for ln in body if rx.search(ln)), None)
         if m:
-            d.test_target, d.runner = m.group(1), runner
+            d.test_target, d.runner = m.group(1).replace("\\", "/"), runner
             break
     d.paths = extract_paths(body)
     return d
+
+
+def _failing_step(rows: list[tuple[str, str]]) -> tuple[str, list[str]] | None:
+    """(step name, lines up to and including the first ##[error]) or None if the job has none."""
+    err = next((i for i, (_, ln) in enumerate(rows) if ln.startswith("##[error]")), None)
+    if err is None:
+        return None
+    step = rows[err][0]
+    if step and step != "UNKNOWN STEP":
+        lines = [ln for i, (s, ln) in enumerate(rows) if s == step and i <= err]
+        return step, lines
+    start = next((i for i in range(err, -1, -1) if rows[i][1].startswith("##[group]Run ")), 0)
+    lines = [ln for _, ln in rows[start:err + 1]]
+    name = lines[0].removeprefix("##[group]") if lines and lines[0].startswith("##[group]Run ") else step
+    return name, lines
+
+
+def _is_aggregator(job: str, lines: list[str]) -> bool:
+    return bool(AGGREGATOR_RE.search(job) or (lines and AGGREGATOR_RE.search(lines[0])))
 
 
 def _drop_groups(lines: list[str]) -> list[str]:
@@ -94,6 +134,11 @@ def _drop_groups(lines: list[str]) -> list[str]:
             inside = True
         elif ln.startswith("##[endgroup]"):
             inside = False
+        elif inside and ln.strip() and not ln.startswith((" ", "\t", "##[")):
+            # Group content is indented; an unindented line means the endgroup marker was lost
+            # (truncated or trimmed log). Don't let one missing marker swallow the whole step.
+            inside = False
+            out.append(ln)
         elif not inside:
             out.append(ln)
     return out
@@ -139,7 +184,7 @@ def _excerpt(lines: list[str]) -> list[str]:
 
 def normalize(line: str) -> str:
     s = re.sub(r"\b[0-9a-f]{7,40}\b", "<sha>", line)
-    s = re.sub(r"\d+(\.\d+)?(ms|s)?\b", "N", s)
+    s = re.sub(r"(?<![A-Za-z\d])\d+(\.\d+)?(ms|s)?\b", "N", s)
     return re.sub(r"\s+", " ", s).strip()[:160]
 
 
@@ -150,10 +195,15 @@ def signature(lines: list[str]) -> str:
             m = rx.search(ln)
             if m:
                 return normalize(m.group(0))
+    # Only the generic "Process completed with exit code N": use the last real line before it.
+    meaningful = [ln for ln in lines if ln.strip() and not ln.startswith("##[")
+                  and not re.fullmatch(r"[\s=\-_*#]+", ln) and not ln.startswith(POST_JOB)]
+    if meaningful:
+        return normalize(meaningful[-1])
     return normalize(lines[-1]) if lines else ""
 
 
-ERROR_RE = re.compile(r"\b(\w*Error|Exception|error TS\d+)\b:?\s.*")
+ERROR_RE = re.compile(r"\b(\w*Error|\w*Exception|error TS\d+):\s.*")
 
 
 def first_error(lines: list[str]) -> str:
@@ -168,8 +218,10 @@ def first_error(lines: list[str]) -> str:
 # ------------------------------------------------------------------ classification
 
 
-def classify(log_text: str, incident: Incident, culprit_commits: int) -> dict[str, Any]:
-    """Heuristic classification. Returns {category, confidence, source, rationale}."""
+def classify(log_text: str, incident: Incident, culprit_commits: int,
+             aggregator: bool = False) -> dict[str, Any]:
+    """Heuristic classification over the failing step's text. Returns {category, confidence,
+    source, rationale}."""
     data = incident.data
     if incident.kind == "ci_failure" and data.get("green_on_red_sha"):
         return _c("flaky", 0.8, "The same commit both failed and passed this workflow (re-run "
@@ -178,12 +230,17 @@ def classify(log_text: str, incident: Incident, culprit_commits: int) -> dict[st
         m = re.search(pat, log_text, re.I)
         if m:
             return _c("infra", 0.75, f"Log matches infrastructure pattern: {m.group(0)!r}.")
+    if re.search(r"\b\d+ flaky\b", log_text) and not re.search(r"\b\d+ failed\b", log_text):
+        return _c("flaky", 0.7, "The test runner itself reports flaky tests and no hard failures.")
     for pat in FLAKY_PATTERNS:
         m = re.search(pat, log_text, re.I)
         if m:
             return _c("flaky", 0.55, f"Log matches timing/flake pattern: {m.group(0)!r}.")
     if not log_text.strip():
         return _c("unknown", 0.2, "No failing-step log was available.")
+    if aggregator:
+        return _c("unknown", 0.3, "Only a roll-up job (required checks / alls-green) failed in the "
+                  "fetched log; open the run to see which upstream job broke.")
     if culprit_commits:
         return _c("real", 0.7, f"Deterministic failure with {culprit_commits} commit(s) between "
                   "last green and first red.")
@@ -279,6 +336,18 @@ def _compare(gh: Gh, repo: str, base: str | None, head: str | None):
     return commits, files, data.get("html_url")
 
 
+def find_last_green(gh: Gh, repo: str, data: dict[str, Any]) -> dict[str, Any] | None:
+    """Targeted lookup when the shared lookback window held no green run for this workflow
+    (busy repos and nightly workflows push it out). Only runs created before the first red
+    count, so a later fix can't pose as the last green."""
+    wf = data["first_red"].get("workflowDatabaseId") or data.get("workflow")
+    runs = gh.json(["run", "list", "-R", repo, "--workflow", str(wf), "--branch", data["branch"],
+                    "--status", "success", "-L", "10", "--json", "databaseId,headSha,url,createdAt"],
+                   repo) or []
+    before = [r for r in runs if r["createdAt"] < data["first_red"]["createdAt"]]
+    return max(before, key=lambda r: r["createdAt"]) if before else None
+
+
 def triage(gh: Gh, incident: Incident, repo: RepoConfig, lessons: list[Lesson]) -> Triage:
     errors: list[str] = []
     d = incident.data
@@ -290,6 +359,11 @@ def triage(gh: Gh, incident: Incident, repo: RepoConfig, lessons: list[Lesson]) 
                                incident.repo)
         except GhError as e:
             errors.append(f"log: {e}")
+        if not d.get("last_green"):
+            try:
+                d["last_green"] = find_last_green(gh, incident.repo, d)
+            except GhError as e:
+                errors.append(f"last green: {e}")
         base = (d.get("last_green") or {}).get("headSha")
         head = d["first_red"]["headSha"]
     else:
@@ -304,7 +378,8 @@ def triage(gh: Gh, incident: Incident, repo: RepoConfig, lessons: list[Lesson]) 
         errors.append(f"compare: {e}")
         commits, files, compare_url = [], [], None
     text_for_rules = "\n".join(digest.excerpt) + "\n" + digest.signature
-    cls = classify(log_text, incident, len(commits))
+    step_text = "\n".join(digest.segment) if digest.segment else log_text
+    cls = classify(step_text, incident, len(commits), aggregator=digest.aggregator)
     return Triage(
         digest=digest, log_text=log_text, classification=cls, commits=commits,
         changed_files=files, compare_url=compare_url,

@@ -211,3 +211,17 @@ def test_unknown_repo_is_a_clear_error(tmp_path, capsys, command):
     err = capsys.readouterr().err
     assert "repo 'acme/nope' is not in the config" in err and "configured repos: acme/webapp" in err
     assert not (tmp_path / "state" / "state.json").exists()
+
+
+def test_learn_rejects_useless_lessons_and_warns_on_narrow_ones(tmp_path, capsys):
+    c = _write_cfg(tmp_path)
+    cli.main(["-c", c, "poll", *FIX])
+    capsys.readouterr()
+    base = ["-c", c, "learn", "acme/webapp", "--note", "apply migrations", "--incident", "ci-ci-main-9002"]
+    assert cli.main([*base, "--pattern", ".*"]) == 2                       # matches everything
+    assert cli.main([*base, "--pattern", "ENOSPC: no space"]) == 2         # misses its own incident
+    assert "not saved" in capsys.readouterr().err
+    assert cli.main([*base, "--pattern", r"column entries\.archived_at does not exist"]) == 0
+    assert "specific identifier" in capsys.readouterr().err                # saved, with a nudge
+    assert cli.main([*base, "--pattern", r"column \S+ does not exist"]) == 0
+    assert capsys.readouterr().err == ""
