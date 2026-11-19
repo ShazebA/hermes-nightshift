@@ -9,7 +9,8 @@ Hermes's root `AGENTS.md` sets the order of preference for new capability. It ru
 | Run every 15 min without waking the model on quiet nights | `hermes cron create ... --script <file>`; the last stdout line `{"wakeAgent": false}` skips the agent | `hermes_cli/subcommands/cron.py`, `cron/scheduler_prompt.py::_parse_wake_gate` |
 | Morning digest with no model at all | `--no-agent`: script stdout is delivered verbatim to `--deliver` | same |
 | Scripts must live under `$HERMES_HOME/scripts/`; `.sh` runs with bash, anything else with **Hermes's** Python | `cron/scheduler_script.py::_resolve_script_path`, `_script_argv` |
-| Card per incident, no duplicates | `hermes kanban create --triage --idempotency-key --json`, `kanban attach` | `hermes_cli/kanban_parser.py`, `kanban.py::_cmd_create` |
+| Card per incident, no duplicates | `hermes kanban create --initial-status blocked --idempotency-key --json`, `kanban attach` | `hermes_cli/kanban_parser.py`, `kanban.py::_cmd_create` |
+| Cards must not be auto-worked | default `--initial-status blocked`; `triage` cards are auto-decomposed into always-assigned children and dispatched when a gateway runs (`kanban.auto_decompose` defaults on) | `gateway/kanban_watchers_dispatcher.py::auto_decompose_tick`, `hermes_cli/kanban_decompose.py` |
 | Teach the small model a narrow procedure | Skill in `$HERMES_HOME/skills/devops/nightshift-triage/`; passes `tools/skill_linter.py` and `skill_manager_tool._validate_frontmatter` | `skills/AGENTS.md` |
 
 Consequences:

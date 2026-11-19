@@ -24,7 +24,7 @@ def test_log_parse_finds_failing_step_test_and_error():
     assert (d.job, d.step) == ("test", "Run npm test")
     assert d.command == "npm test"
     assert d.test_target == "src/lib/entries.test.ts" and d.runner == "vitest"
-    assert d.error == "Error: column entries.sealed_at does not exist"
+    assert d.error == "Error: column entries.archived_at does not exist"
     assert d.signature.startswith("FAIL src/lib/entries.test.ts")
     assert "src/lib/entries.ts" in d.paths
 
@@ -33,7 +33,7 @@ def test_excerpt_drops_step_header_and_env_and_ansi():
     d = parse_failed_log(ci_log())
     text = "\n".join(d.excerpt)
     assert "SUPABASE_URL" not in text and "shell:" not in text and "\x1b[" not in text
-    assert "column entries.sealed_at does not exist" in text
+    assert "column entries.archived_at does not exist" in text
     assert len(d.excerpt) <= 60
 
 
@@ -96,7 +96,7 @@ def test_full_triage_from_fixtures(gh):
     t = triage(gh, ci, RepoConfig(name=REPO, repro_setup="npm ci"),
                [Lesson(pattern="does not exist", note="migrations", id="L1")])
     assert t.errors == []
-    assert [c["title"] for c in t.commits] == ["Refactor entries query helpers", "Read sealed_at from entries"]
+    assert [c["title"] for c in t.commits] == ["Refactor entries query helpers", "Read archived_at from entries"]
     assert t.suspected[0]["path"] == "src/lib/entries.ts"
     assert t.repro.startswith(f"git checkout {ci.data['first_red']['headSha']} ")
     assert t.lessons and t.lessons[0]["id"] == "L1"

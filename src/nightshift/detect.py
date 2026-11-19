@@ -4,6 +4,7 @@ same pure functions later (see docs/webhooks.md)."""
 
 from __future__ import annotations
 
+from collections.abc import Callable, Mapping
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
@@ -100,14 +101,17 @@ def _run_ref(r: dict[str, Any]) -> dict[str, Any]:
 
 
 def deploy_incidents(repo: str, deployments: list[dict[str, Any]],
-                     statuses: dict[int, list[dict[str, Any]]],
-                     now: datetime | None = None) -> list[Incident]:
+                     statuses: Mapping[int, list[dict[str, Any]]] | Callable[[int], list[dict[str, Any]]],
+                     now: datetime | None = None, max_walk: int = 10) -> list[Incident]:
     """Latest decided deployment per environment is failure/error → incident.
 
     Vercel (and most providers) report through GitHub deployment statuses, so this covers
-    Vercel without a Vercel token. ``statuses`` maps deployment id → statuses, newest first.
+    Vercel without a Vercel token. ``statuses`` gives a deployment's statuses, newest first; as a
+    callable it is only invoked while walking each environment back to its last success, so a
+    poll costs one status call per environment in the common all-green case.
     """
     now = now or _now()
+    status_of = statuses if callable(statuses) else (lambda i: statuses.get(i))
     by_env: dict[str, list[dict[str, Any]]] = {}
     for d in deployments:
         by_env.setdefault(d.get("environment") or "default", []).append(d)
@@ -115,8 +119,8 @@ def deploy_incidents(repo: str, deployments: list[dict[str, Any]],
     for env, deps in sorted(by_env.items()):
         deps.sort(key=lambda d: (d["created_at"], d["id"]), reverse=True)
         latest_fail, last_ok = None, None
-        for d in deps:
-            st = (statuses.get(d["id"]) or [{}])[0]
+        for d in deps[:max_walk]:
+            st = (status_of(d["id"]) or [{}])[0]
             state = st.get("state")
             if state in ("failure", "error"):
                 if latest_fail is None and last_ok is None:
@@ -223,10 +227,8 @@ def detect_repo(gh: Gh, repo: RepoConfig, lookback: int = 30,
     if "deployments" in repo.watch:
         def deploys():
             deps = gh.json(["api", f"repos/{name}/deployments?per_page=20"], name) or []
-            statuses = {d["id"]: gh.json(
-                ["api", f"repos/{name}/deployments/{d['id']}/statuses?per_page=5"], name) or []
-                for d in deps}
-            return deploy_incidents(name, deps, statuses, now)
+            return deploy_incidents(name, deps, lambda i: gh.json(
+                ["api", f"repos/{name}/deployments/{i}/statuses?per_page=5"], name) or [], now)
         guarded("deployments", deploys)
     if "issues" in repo.watch:
         guarded("issues", lambda: issue_incidents(name, gh.json(

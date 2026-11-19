@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -37,6 +37,12 @@ class Report:
     skipped_seen: int = 0
     errors: list[str] = field(default_factory=list)
     republished: list[str] = field(default_factory=list)
+    watchers: int = 0  # watcher calls attempted (one per repo x kind, CI once per branch)
+
+    @property
+    def blind(self) -> bool:
+        """Every watcher failed (expired gh auth, rate limit, outage): nothing was observed."""
+        return self.watchers > 0 and len(self.errors) >= self.watchers
 
     @property
     def new_failures(self) -> list[Handled]:
@@ -54,6 +60,7 @@ def run_once(cfg: Config, gh: Gh, *, dry_run: bool = False, briefs_dir: Path | N
     for repo in cfg.repos:
         incidents, errors = detect_repo(gh, repo, cfg.lookback_runs, now)
         report.errors += errors
+        report.watchers += sum(len(repo.branches) if k == "ci" else 1 for k in repo.watch)
         lessons = repo.lessons + load_lessons(cfg.state_dir, repo.name)
         for inc in incidents:
             if not dry_run and state.is_seen(inc.repo, inc.id):
@@ -80,6 +87,10 @@ def run_once(cfg: Config, gh: Gh, *, dry_run: bool = False, briefs_dir: Path | N
                     "kanban_task_id": h.kanban_task_id,
                 })
     if not dry_run:
+        stamp = (now or datetime.now(UTC)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        for e in report.errors:  # surfaced by the digest so a broken watcher can't go unnoticed
+            state.append_ledger({"id": "watch-error", "repo": e.split(" ", 1)[0], "kind": "watch_error",
+                                 "title": e, "url": "", "detected_at": stamp})
         state.save()
     return report
 

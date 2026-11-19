@@ -2,8 +2,13 @@
 the Hermes tree, so Nightshift survives Hermes refactors).
 
 Flags confirmed against hermes_cli/kanban_parser.py: `create <title> --body --triage
---idempotency-key --created-by --assignee --json`, `attach <task_id> <path>`, and the
-top-level `--board <slug>`.
+--initial-status --idempotency-key --created-by --assignee --json`, `attach <task_id> <path>`,
+and the top-level `--board <slug>`.
+
+Default card status is `blocked`: with a gateway running, Hermes auto-decomposes `triage` cards
+on every board (gateway/kanban_watchers_dispatcher.py::auto_decompose_tick) into children that
+always get an assignee and are then dispatched, which would let a local worker start "fixing" a
+repo nobody asked it to touch. A brief is input for a human or a chosen coding agent.
 """
 
 from __future__ import annotations
@@ -44,8 +49,10 @@ def create_card(cfg: KanbanConfig, brief: dict[str, Any], md_path: Path,
     args = base + ["create", title, "--body", card_body(brief, md_path),
                    "--idempotency-key", f"nightshift:{brief['repo']}:{brief['id']}",
                    "--created-by", "nightshift", "--json"]
-    if cfg.triage:
+    if cfg.status == "triage":
         args.append("--triage")
+    elif cfg.status == "blocked":
+        args += ["--initial-status", "blocked"]
     if cfg.assignee:
         args += ["--assignee", cfg.assignee]
     try:

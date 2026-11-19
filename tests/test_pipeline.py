@@ -38,7 +38,9 @@ def test_kanban_card_per_failure_with_idempotency_key(cfg, gh, fake_hermes):
     assert len(creates) == 3 and len(attaches) == 3
     for argv in creates:
         assert argv[:4] == ["hermes", "kanban", "--board", "nightshift"]
-        assert "--triage" in argv and "--json" in argv
+        assert "--json" in argv
+        # safe default: never park in triage (auto-decomposed + dispatched by a running gateway)
+        assert "--triage" not in argv and argv[argv.index("--initial-status") + 1] == "blocked"
         assert argv[argv.index("--idempotency-key") + 1].startswith("nightshift:acme/webapp:")
     for h in r.new_failures:
         assert h.kanban == "created"
@@ -122,7 +124,7 @@ def test_tick_wakes_agent_only_for_new_failures(tmp_path, capsys):
 
 def test_learned_lesson_shows_up_in_later_briefs(tmp_path, capsys):
     c = _write_cfg(tmp_path)
-    assert cli.main(["-c", c, "learn", "acme/webapp", "--pattern", r"sealed_at does not exist",
+    assert cli.main(["-c", c, "learn", "acme/webapp", "--pattern", r"archived_at does not exist",
                      "--note", "Run supabase migrations before vitest."]) == 0
     assert cli.main(["-c", c, "poll", "--dry-run", "--briefs-dir", str(tmp_path / "b"), *FIX]) == 0
     brief = json.loads(next((tmp_path / "b").rglob("ci-ci-main-9002.json")).read_text())
@@ -133,7 +135,7 @@ def test_classify_overrides_heuristic_and_keeps_it(tmp_path, capsys):
     c = _write_cfg(tmp_path)
     cli.main(["-c", c, "poll", *FIX])
     assert cli.main(["-c", c, "classify", "ci-e2e-main-7102", "--category", "real", "--confidence", "0.6",
-                     "--rationale", "Timeout is caused by the new sealed_at query."]) == 0
+                     "--rationale", "Timeout is caused by the new archived_at query."]) == 0
     b = json.loads(next((tmp_path / "state").rglob("ci-e2e-main-7102.json")).read_text())
     assert b["classification"]["source"] == "model" and b["classification"]["category"] == "real"
     assert b["classification"]["heuristic"]["category"] == "flaky"
@@ -154,3 +156,32 @@ def test_digest_groups_by_kind_and_advances_marker(tmp_path, capsys):
     assert (tmp_path / "state" / "digests").is_dir()
     cli.main(["-c", c, "digest"])
     assert "quiet night" in capsys.readouterr().out
+
+
+def test_tick_prints_commands_that_run_from_a_bare_environment(tmp_path, capsys):
+    """The model runs these through Hermes's `terminal`, whose PATH/cwd may not include our venv."""
+    import shlex
+    import subprocess
+
+    c = _write_cfg(tmp_path)
+    cli.main(["-c", c, "tick", *FIX])
+    out = capsys.readouterr().out
+    line = next(ln for ln in out.splitlines() if ln.strip().startswith("classify:") and "ci-e2e-main-7102" in ln)
+    cmd = line.split("classify:", 1)[1].strip()
+    cmd = cmd.replace("CATEGORY", "flaky").replace("NUMBER", "0.7").replace("SENTENCE", "Timeout in E2E.")
+    proc = subprocess.run(shlex.split(cmd), cwd="/", env={"HOME": str(tmp_path), "PATH": "/usr/bin:/bin"},
+                          capture_output=True, text=True)
+    assert proc.returncode == 0, proc.stderr
+    assert "flaky (0.70, model)" in proc.stdout
+
+
+def test_gh_outage_is_loud_not_a_quiet_night(tmp_path, capsys):
+    empty = tmp_path / "nofixtures"
+    empty.mkdir()
+    (empty / "manifest.yaml").write_text("commands: {}\n")
+    c = _write_cfg(tmp_path)
+    assert cli.main(["-c", c, "tick", "--fixtures", str(empty)]) == 1
+    assert "wakeAgent" not in capsys.readouterr().out
+    cli.main(["-c", c, "digest"])
+    out = capsys.readouterr().out
+    assert "Watcher errors" in out and "no fixture recorded" in out

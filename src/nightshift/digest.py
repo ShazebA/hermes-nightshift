@@ -5,8 +5,9 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import Any
 
-KIND_ORDER = ("ci_failure", "deploy_failure", "pr_awaiting_review", "new_issue", "stale_branch")
+KIND_ORDER = ("watch_error", "ci_failure", "deploy_failure", "pr_awaiting_review", "new_issue", "stale_branch")
 KIND_TITLE = {
+    "watch_error": "Watcher errors (Nightshift could not see this repo)",
     "ci_failure": "CI failures", "deploy_failure": "Failed deployments",
     "pr_awaiting_review": "PRs awaiting review", "new_issue": "New issues",
     "stale_branch": "Stale branches",
@@ -18,8 +19,9 @@ def render_digest(rows: list[dict[str, Any]], since: str | None, until: str) -> 
     if not rows:
         return f"Nightshift digest ({window}): quiet night, nothing new.\n"
     failures = sum(1 for r in rows if r["kind"] in ("ci_failure", "deploy_failure"))
+    rows_ = [r for r in rows if r["kind"] != "watch_error"]
     out = [f"# Nightshift digest, {until[:10]}", "",
-           f"{len(rows)} new item(s) {window}; {failures} failure(s) triaged.", ""]
+           f"{len(rows_)} new item(s) {window}; {failures} failure(s) triaged.", ""]
     by_repo: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for r in rows:
         by_repo[r["repo"]].append(r)
@@ -31,6 +33,12 @@ def render_digest(rows: list[dict[str, Any]], since: str | None, until: str) -> 
             if not ks:
                 continue
             out.append(f"**{KIND_TITLE[kind]}**")
+            if kind == "watch_error":
+                counts: dict[str, int] = {}
+                for r in ks:
+                    counts[r["title"]] = counts.get(r["title"], 0) + 1
+                out += [f"- {t} (x{n})" for t, n in counts.items()] + [""]
+                continue
             for r in ks:
                 line = f"- {r['title']} ({r['url']})"
                 if r.get("classification"):

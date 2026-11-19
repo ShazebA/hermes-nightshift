@@ -1,6 +1,6 @@
 # From polling to webhooks
 
-Polling is the default because it needs no public endpoint. A poll costs about 5 `gh` calls per repo, plus 2 per new failure, which is well inside GitHub's rate limit for a handful of repos every 15 minutes.
+Polling is the default because it needs no public endpoint. A poll costs roughly 6 to 8 `gh` calls per repo (one per watcher, plus one deployment-status call per environment walked), and 2 more per new failure. That is well inside GitHub's rate limit for a handful of repos every 15 minutes.
 
 Hermes already has the primitive for switching: a webhook route can **fire an existing cron job** (`hermes webhook subscribe --cron-job`, confirmed in `hermes_cli/subcommands/webhook.py`). The webhook becomes a faster trigger for the same `nightshift-watch` job. The pipeline, dedupe and skill are unchanged, so webhook mode cannot drift from poll mode.
 

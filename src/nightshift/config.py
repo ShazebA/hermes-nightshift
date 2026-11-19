@@ -12,6 +12,7 @@ import yaml
 
 DEFAULT_CONFIG_PATHS = ("nightshift.yaml", "~/.config/nightshift/nightshift.yaml")
 DEFAULT_TOPIC = "dev.aetherbus.nightshift.brief.v1"
+KANBAN_STATUSES = ("blocked", "triage", "ready")
 WATCH_KINDS = ("ci", "deployments", "issues", "pull_requests", "stale_branches")
 _REPO_RE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 
@@ -51,7 +52,10 @@ class KanbanConfig:
     board: str | None = None
     hermes_bin: str = "hermes"
     assignee: str | None = None
-    triage: bool = True
+    # blocked: waits for a human (safe default). triage: Hermes's gateway auto-decomposes triage
+    # cards (kanban.auto_decompose, default on) into assigned child tasks that get dispatched.
+    # ready: dispatched as soon as kanban.default_assignee or `assignee` is set.
+    status: str = "blocked"
 
 
 @dataclass
@@ -134,6 +138,8 @@ def parse_config(data: dict[str, Any], base: Path) -> Config:
             )
         )
     k = data.get("kanban") or {}
+    if k.get("status", "blocked") not in KANBAN_STATUSES:
+        raise ConfigError(f"kanban.status must be one of {KANBAN_STATUSES}")
     a = data.get("aetherbus") or {}
     s = data.get("sandbox") or {}
     state_dir = _expand(data.get("state_dir", "~/.local/share/nightshift"), base)
@@ -146,7 +152,7 @@ def parse_config(data: dict[str, Any], base: Path) -> Config:
             board=k.get("board"),
             hermes_bin=k.get("hermes_bin", "hermes"),
             assignee=k.get("assignee"),
-            triage=bool(k.get("triage", True)),
+            status=k.get("status", "blocked"),
         ),
         aetherbus=AetherBusConfig(
             enabled=bool(a.get("enabled", False)),

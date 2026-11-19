@@ -29,7 +29,11 @@ repos:
 kanban:
   enabled: true          # one card per failure brief via `hermes kanban create`
   # board: nightshift    # default: Hermes's current board
-  triage: true           # park cards in the triage column for a human or specifier
+  # blocked (default): waits for a human to pick the agent that fixes it.
+  # triage: a running Hermes gateway auto-decomposes these (kanban.auto_decompose) into
+  #         assigned child tasks and dispatches them; only use it if you want that.
+  # ready:  dispatched as soon as kanban.default_assignee or `assignee` is set.
+  status: blocked
   # assignee: coder      # Hermes profile to assign cards to
   hermes_bin: hermes
 

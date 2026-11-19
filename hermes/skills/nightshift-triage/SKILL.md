@@ -27,27 +27,29 @@ fix from the brief.
 
 ## Prerequisites
 
-- `nightshift` on `PATH` (`uv tool install hermes-nightshift` or `pip install -e .` from the repo).
-- `gh` authenticated for the watched repos (the script already used it).
+- Nightshift installed and wired in with `scripts/install-hermes.sh` from the Nightshift repo.
+- You do not need `nightshift` on `PATH`: the prompt prints the full command for every brief.
 
 ## How to Run
 
-Each brief line in the prompt looks like:
+Each brief in the prompt looks like this:
 
 ```
 - id=ci-ci-main-9002 repo=owner/repo heuristic=real/0.70 brief=/path/to/ci-ci-main-9002.md card=t_0001 bus=published
+    classify: /path/to/python -m nightshift -c /path/to/nightshift.yaml classify ci-ci-main-9002 --category CATEGORY --confidence NUMBER --rationale "SENTENCE"
+    learn: /path/to/python -m nightshift -c /path/to/nightshift.yaml learn owner/repo --pattern 'REGEX' --note 'FIX' --incident ci-ci-main-9002
 ```
 
-Handle the briefs one at a time, in order. Keep each answer short.
+Handle the briefs one at a time, in order. Run the `classify:` and `learn:` lines with
+`terminal` exactly as printed. Change only the CAPITALISED placeholders. Keep each answer short.
 
 ## Quick Reference
 
-| Need | Command (run with `terminal`) |
+| Need | How |
 |---|---|
-| Record your classification | `nightshift classify <id> --category <flaky\|real\|infra\|unknown> --confidence <0..1> --rationale "<one sentence>"` |
-| Save a repo lesson | `nightshift learn <owner/repo> --pattern '<regex>' --note '<what it means and the fix>' --incident <id>` |
-| List lessons | `nightshift lessons <owner/repo>` |
-| Show a brief | `read_file` on the `brief=` path |
+| Read a brief | `read_file` on the `brief=` path |
+| Record your classification | the printed `classify:` line; CATEGORY is one of `flaky`, `real`, `infra`, `unknown`; NUMBER is 0 to 1 |
+| Save a repo lesson | the printed `learn:` line; REGEX matches the error, FIX is one line |
 
 ## Procedure
 
@@ -66,9 +68,9 @@ Handle the briefs one at a time, in order. Keep each answer short.
 3. Confidence: `0.8` when the log states the cause outright, `0.6` when it is a reasonable
    inference, `0.4` when you are guessing. Never above `0.9`.
 4. If your category differs from the `heuristic=` value, OR your confidence differs by more
-   than 0.15, run `nightshift classify`. Otherwise do nothing for this step.
+   than 0.15, run the `classify:` line. Otherwise do nothing for this step.
 5. Learn: if the root cause is something that will recur in this repo (a setup step, a missing
-   migration, an env var, a known flaky test), run `nightshift learn` with a regex that matches
+   migration, an env var, a known flaky test), run the `learn:` line with a REGEX that matches
    a stable part of the error line (no SHAs, numbers or timestamps) and a one-line note with the
    fix. Also save the same fact with `memory` so interactive sessions know it. Skip this step
    when nothing generalises.
@@ -79,7 +81,7 @@ Handle the briefs one at a time, in order. Keep each answer short.
 
 - Do not run the repro command yourself unless the user configured `terminal.backend: docker`;
   repo code must not run on the host. Use `nightshift repro <id> --execute` only when asked.
-- Do not rewrite the brief file with `patch`. Only `nightshift classify` changes a brief, so
+- Do not rewrite the brief file with `patch`. Only the `classify:` command changes a brief, so
   the JSON stays valid against `nightshift.brief/v1`.
 - The rationale is capped at 400 characters; one sentence is enough.
 - A lesson regex that is too broad (for example `error`) will attach to every future brief.
@@ -87,5 +89,5 @@ Handle the briefs one at a time, in order. Keep each answer short.
 
 ## Verification
 
-- `nightshift brief show <id>` shows your category with source `model`.
-- `nightshift lessons <owner/repo>` lists any lesson you added.
+- `read_file` the brief again: the table shows your category with source `model`.
+- The `learn:` command prints `lesson L<n> saved`; the next brief that matches lists it.

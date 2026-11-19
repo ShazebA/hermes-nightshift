@@ -39,7 +39,7 @@ def test_ci_brief_content(briefs):
     assert b["culprit"]["last_green_sha"].startswith("5f2e8a1")
     assert b["culprit"]["first_red_sha"].startswith("9c4d7e2")
     assert b["what_broke"]["test_target"] == "src/lib/entries.test.ts"
-    assert "sealed_at does not exist" in b["what_broke"]["summary"]
+    assert "archived_at does not exist" in b["what_broke"]["summary"]
     assert {link["label"] for link in b["links"]} >= {"Failing run", "Last green run", "Culprit range (compare)"}
 
 

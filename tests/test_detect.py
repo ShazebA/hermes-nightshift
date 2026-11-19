@@ -58,6 +58,7 @@ def test_other_branches_are_ignored():
 def test_deploy_failure_finds_previous_success_per_environment():
     deps = json.loads((RED_MAIN / "deployments.json").read_text())
     statuses = {i: json.loads((RED_MAIN / f"status-{i}.json").read_text()) for i in (500, 501, 502)}
+    deps = [d for d in deps if d["id"] != 499]
     inc = deploy_incidents(REPO, deps, statuses, NOW)
     assert [i.id for i in inc] == ["deploy-production-501"]
     assert inc[0].data["last_success_sha"] == deps[2]["sha"]
@@ -102,3 +103,11 @@ def test_fixture_placeholders_follow_the_polled_repo():
     gh = FixtureGh(RED_MAIN)
     found, _ = detect_repo(gh, RepoConfig(name="someone/else", watch=["ci"]), now=NOW)
     assert found and all("someone/else" in i.url for i in found)
+
+
+def test_deploy_walk_stops_at_last_success(gh):
+    # deployment 499 is older than Production's last success and has no recorded statuses:
+    # fetching it would raise "no fixture recorded".
+    found, errors = detect_repo(gh, RepoConfig(name=REPO, watch=["deployments"]), now=NOW)
+    assert errors == [] and [i.id for i in found] == ["deploy-production-501"]
+    assert not any("/deployments/499/" in c for c in gh.calls)

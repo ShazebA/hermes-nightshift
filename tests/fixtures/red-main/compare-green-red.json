@@ -4,11 +4,11 @@
   "ahead_by": 2,
   "commits": [
     {"sha": "77aa77aa1b3f5d6e8a0b2c4d6e8f0a1b3c5d7e9f", "html_url": "https://github.com/{repo}/commit/77aa77aa1b3f5d6e8a0b2c4d6e8f0a1b3c5d7e9f", "author": {"login": "dev-a"}, "commit": {"message": "Refactor entries query helpers\n\nNo behaviour change.", "author": {"name": "Dev A"}}},
-    {"sha": "9c4d7e2a1b3f5d6e8a0b2c4d6e8f0a1b3c5d7e9f", "html_url": "https://github.com/{repo}/commit/9c4d7e2a1b3f5d6e8a0b2c4d6e8f0a1b3c5d7e9f", "author": null, "commit": {"message": "Read sealed_at from entries", "author": {"name": "Dev B"}}}
+    {"sha": "9c4d7e2a1b3f5d6e8a0b2c4d6e8f0a1b3c5d7e9f", "html_url": "https://github.com/{repo}/commit/9c4d7e2a1b3f5d6e8a0b2c4d6e8f0a1b3c5d7e9f", "author": null, "commit": {"message": "Read archived_at from entries", "author": {"name": "Dev B"}}}
   ],
   "files": [
     {"filename": "src/app/page.tsx", "status": "modified"},
     {"filename": "src/lib/entries.ts", "status": "modified"},
-    {"filename": "supabase/migrations/20261118120000_add_sealed_at.sql", "status": "added"}
+    {"filename": "supabase/migrations/20261118120000_add_archived_at.sql", "status": "added"}
   ]
 }

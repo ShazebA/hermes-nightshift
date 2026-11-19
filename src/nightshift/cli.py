@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shlex
 import shutil
 import subprocess
 import sys
@@ -42,7 +43,16 @@ def _gh(args) -> Gh:
 # ------------------------------------------------------------------ poll / tick
 
 
-def _summary(report: Report) -> list[str]:
+def self_command(cfg: Config) -> str:
+    """How the model should invoke Nightshift: absolute interpreter + absolute config, so it works
+    from Hermes's `terminal` tool whatever PATH and cwd the gateway has."""
+    cmd = [sys.executable, "-m", "nightshift"]
+    if cfg.source_path:
+        cmd += ["-c", str(cfg.source_path)]
+    return shlex.join(cmd)
+
+
+def _summary(report: Report, ns: str | None = None) -> list[str]:
     lines = []
     for h in report.new_failures:
         c = h.brief["classification"] if h.brief else {}
@@ -51,6 +61,11 @@ def _summary(report: Report) -> list[str]:
             f"heuristic={c.get('category')}/{c.get('confidence', 0):.2f} "
             f"brief={h.brief_md} card={h.kanban_task_id or h.kanban} bus={h.aetherbus}")
         lines += [f"    note: {n}" for n in h.notes]
+        if ns:
+            lines.append(f"    classify: {ns} classify {h.incident.id} --category CATEGORY "
+                         f"--confidence NUMBER --rationale \"SENTENCE\"")
+            lines.append(f"    learn: {ns} learn {h.incident.repo} --pattern 'REGEX' --note 'FIX' "
+                         f"--incident {h.incident.id}")
     notices = [h for h in report.handled if not h.incident.is_failure]
     if notices:
         lines.append("Notices (digest only):")
@@ -88,14 +103,21 @@ def cmd_tick(args, cfg: Config) -> int:
     """Output contract for a Hermes cron `--script` job: a tiny summary the triage skill acts
     on, ending with {"wakeAgent": false} when no new failure needs the model."""
     report = run_once(cfg, _gh(args))
+    if report.blind:
+        # Non-zero exit makes Hermes deliver a failure notice instead of a silent quiet night.
+        print("nightshift: every watcher failed; nothing was observed this run", file=sys.stderr)
+        for e in report.errors:
+            print(f"  {e}", file=sys.stderr)
+        return 1
     if not report.new_failures:
         for e in report.errors:
             print(f"nightshift error: {e}")
         print(WAKE_FALSE)
         return 0
     print(f"NIGHTSHIFT: {len(report.new_failures)} new failure brief(s). For each id below, "
-          "follow the nightshift-triage skill.")
-    for line in _summary(report):
+          "follow the nightshift-triage skill. Run the printed commands exactly, replacing only "
+          "the CAPITALISED placeholders.")
+    for line in _summary(report, self_command(cfg)):
         print(line)
     for e in report.errors:
         print(f"nightshift error: {e}")

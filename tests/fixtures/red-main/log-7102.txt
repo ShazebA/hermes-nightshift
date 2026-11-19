@@ -1,7 +1,7 @@
 e2e	Run npx playwright test	2026-11-19T05:44:00.0000000Z ##[group]Run npx playwright test
 e2e	Run npx playwright test	2026-11-19T05:44:00.0000001Z   npx playwright test
 e2e	Run npx playwright test	2026-11-19T05:44:00.0000002Z ##[endgroup]
-e2e	Run npx playwright test	2026-11-19T05:45:10.0000000Z   1) [chromium] › tests/e2e/seal.spec.ts:14:5 › seal an entry
+e2e	Run npx playwright test	2026-11-19T05:45:10.0000000Z   1) [chromium] › tests/e2e/archive.spec.ts:14:5 › archive an entry
 e2e	Run npx playwright test	2026-11-19T05:45:10.0000001Z     Test timeout of 30000ms exceeded.
 e2e	Run npx playwright test	2026-11-19T05:45:10.0000002Z     Error: page.click: Test timeout of 30000ms exceeded.
 e2e	Run npx playwright test	2026-11-19T05:45:10.0000003Z   1 failed

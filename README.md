@@ -20,7 +20,7 @@ flowchart LR
     L[(lessons/<repo>.yaml)] --> P
     SK -->|"nightshift classify"| B
     SK -->|"nightshift learn"| L
-    B --> K["hermes kanban card<br/>(triage column)"]
+    B --> K["hermes kanban card<br/>(blocked: waits for you)"]
     B -->|"CloudEvent, dataref = file://brief.json"| AB{{"AetherBus<br/>(optional)"}}
     AB --> MCP["aetherbus-mcp"] -->|"live MCP resource"| CC["Claude Code / Codex / Cursor"]
     K --> CC
@@ -30,7 +30,7 @@ flowchart LR
 1. **Watch.** A Hermes cron job runs `nightshift tick` every 15 minutes. It polls with `gh` for failed Actions runs, failed deployments (Vercel and most hosts report through GitHub deployment statuses, so no Vercel token is needed), new issues, PRs awaiting review and stale branches. Polling means no public webhook. The detectors are pure functions over `gh` JSON, so a `hermes webhook` route can feed them later (see [docs/webhooks.md](docs/webhooks.md)).
 2. **Triage.** For each new failure, Nightshift pulls the failing step's log. It extracts the error, the failing test and the step's command, then finds the last green and first red runs and diffs them for the culprit commits and suspected files. It also classifies the failure as flaky, real or infra with a heuristic. A red streak becomes one incident, not one per run.
 3. **Brief.** It writes one brief per incident to disk as JSON, the canonical copy validated against [a versioned JSON Schema](src/nightshift/schema/brief.v1.schema.json), plus a Markdown rendering. See [docs/brief-schema.md](docs/brief-schema.md).
-4. **Handoff.** It opens a Hermes kanban card with the brief attached and, if enabled, publishes a CloudEvent to [AetherBus](https://github.com/ShazebA/aetherbus) whose `dataref` points at the brief JSON (a pointer, not a payload). `aetherbus-mcp` exposes the topic as a live MCP resource, so an MCP client sees new briefs as they land. Each sink is optional, and a sink failure never loses the brief.
+4. **Handoff.** It opens a Hermes kanban card with the brief attached, `blocked` by default so no Hermes worker picks it up on its own and, if enabled, publishes a CloudEvent to [AetherBus](https://github.com/ShazebA/aetherbus) whose `dataref` points at the brief JSON (a pointer, not a payload). `aetherbus-mcp` exposes the topic as a live MCP resource, so an MCP client sees new briefs as they land. Each sink is optional, and a sink failure never loses the brief.
 5. **Learn.** The cron prompt wakes the model only when there is a new failure. The `nightshift-triage` skill has the model confirm or override the heuristic (`nightshift classify`) and record repo-specific lessons (`nightshift learn`). Lessons are regexes matched against future failing logs, so the next brief already says, for example, "this repo's CI fails when Supabase migrations aren't applied".
 6. **Digest.** A morning `--no-agent` cron job summarizes the night to whatever gateway Hermes has configured, and also writes it to a file.
 
@@ -129,7 +129,7 @@ The config lives at `./nightshift.yaml`, then `$NIGHTSHIFT_CONFIG`, then `~/.con
 | `repos[].sandbox_image` | `sandbox.image` | Per-repo image |
 | `kanban.enabled` | `true` | Create a card per failure brief |
 | `kanban.board` | current board | `hermes kanban --board` |
-| `kanban.triage` | `true` | Park cards in the triage column |
+| `kanban.status` | `blocked` | `blocked` waits for a human. `triage` cards are auto-decomposed and dispatched by a running Hermes gateway. `ready` is dispatched once an assignee or `kanban.default_assignee` is set |
 | `kanban.assignee` | none | Hermes profile to assign |
 | `kanban.hermes_bin` | `hermes` | Path to the Hermes CLI |
 | `aetherbus.enabled` | `false` | Publish a CloudEvent per brief |
