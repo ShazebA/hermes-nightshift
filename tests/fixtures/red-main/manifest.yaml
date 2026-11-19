@@ -1,0 +1,17 @@
+# Recorded `gh` output for one red night on a Next.js + Supabase repo (synthetic data in
+# real gh JSON shapes). Keys are gh argv with the repo replaced by {repo}; see nightshift/gh.py.
+# Scenario: CI red on main for 2 runs (real break), nightly E2E red on a SHA that also
+# passed (flaky), Production deploy failed, 1 new issue, 1 PR awaiting review, 1 stale branch.
+commands:
+  ? run list -R {repo} --branch main -L 30 --json databaseId,name,workflowName,workflowDatabaseId,status,conclusion,headSha,headBranch,event,createdAt,url,attempt,displayTitle
+  : runs-main.json
+  run view 9003 -R {repo} --log-failed: log-9003.txt
+  run view 7102 -R {repo} --log-failed: log-7102.txt
+  api repos/{repo}/compare/5f2e8a1c9b7d3e4f6a8b0c2d4e6f8a0b1c3d5e7f...9c4d7e2a1b3f5d6e8a0b2c4d6e8f0a1b3c5d7e9f: compare-green-red.json
+  api 'repos/{repo}/deployments?per_page=20': deployments.json
+  api 'repos/{repo}/deployments/500/statuses?per_page=5': status-500.json
+  api 'repos/{repo}/deployments/501/statuses?per_page=5': status-501.json
+  api 'repos/{repo}/deployments/502/statuses?per_page=5': status-502.json
+  issue list -R {repo} --state open --limit 30 --json number,title,author,createdAt,url,labels: issues.json
+  pr list -R {repo} --state open --limit 30 --json number,title,author,createdAt,url,isDraft,reviewDecision,headRefName: prs.json
+  api graphql -f 'query=<graphql>' -F owner={owner} -F name={name}: branches.json

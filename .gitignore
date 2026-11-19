@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+
+# Local config and runtime output (may name private repos)
+nightshift.yaml
+nightshift.local.yaml
+nightshift-dry-run/
+state/
+*.outbox.sqlite
+.outbox.sqlite
+
+# Secrets
+.env
+.env.*

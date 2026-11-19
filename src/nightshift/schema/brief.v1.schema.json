@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ShazebA/hermes-nightshift/schema/brief.v1.schema.json",
+  "title": "Nightshift incident brief, v1",
+  "description": "One brief per incident. JSON is canonical; the Markdown file is rendered from it. Additive changes keep v1; renames or removals bump to v2.",
+  "type": "object",
+  "required": ["schema", "id", "repo", "kind", "title", "created_at", "classification", "what_broke", "repro", "culprit", "lessons", "links", "handoff"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "nightshift.brief/v1"},
+    "id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+    "repo": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"},
+    "kind": {"enum": ["ci_failure", "deploy_failure"]},
+    "title": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"},
+    "classification": {
+      "type": "object",
+      "required": ["category", "confidence", "source", "rationale"],
+      "additionalProperties": false,
+      "properties": {
+        "category": {"enum": ["flaky", "real", "infra", "unknown"]},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "label": {"enum": ["low", "medium", "high"]},
+        "source": {"enum": ["heuristic", "model", "human"]},
+        "rationale": {"type": "string", "maxLength": 400},
+        "heuristic": {"type": "object"}
+      }
+    },
+    "what_broke": {
+      "type": "object",
+      "required": ["summary", "branch", "signature", "log_excerpt"],
+      "properties": {
+        "summary": {"type": "string"},
+        "workflow": {"type": ["string", "null"]},
+        "environment": {"type": ["string", "null"]},
+        "job": {"type": ["string", "null"]},
+        "step": {"type": ["string", "null"]},
+        "branch": {"type": ["string", "null"]},
+        "run_id": {"type": ["integer", "null"]},
+        "run_url": {"type": ["string", "null"]},
+        "failed_at": {"type": ["string", "null"]},
+        "red_streak": {"type": ["integer", "null"]},
+        "signature": {"type": "string"},
+        "error": {"type": ["string", "null"]},
+        "test_target": {"type": ["string", "null"]},
+        "log_excerpt": {"type": "array", "items": {"type": "string"}, "maxItems": 80}
+      }
+    },
+    "repro": {
+      "type": "object",
+      "required": ["command", "verified"],
+      "properties": {
+        "command": {"type": "string"},
+        "verified": {"type": "boolean"},
+        "sandbox": {
+          "type": ["object", "null"],
+          "properties": {
+            "image": {"type": "string"},
+            "exit_code": {"type": ["integer", "null"]},
+            "reproduced": {"type": ["boolean", "null"]},
+            "ran_at": {"type": "string"},
+            "output_tail": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    },
+    "culprit": {
+      "type": "object",
+      "required": ["last_green_sha", "first_red_sha", "commits", "suspected_files"],
+      "properties": {
+        "last_green_sha": {"type": ["string", "null"]},
+        "last_green_url": {"type": ["string", "null"]},
+        "first_red_sha": {"type": "string"},
+        "first_red_url": {"type": ["string", "null"]},
+        "compare_url": {"type": ["string", "null"]},
+        "commits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["sha", "title"],
+            "properties": {"sha": {"type": "string"}, "title": {"type": "string"}, "author": {"type": ["string", "null"]}, "url": {"type": ["string", "null"]}}
+          }
+        },
+        "suspected_files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "reason"],
+            "properties": {"path": {"type": "string"}, "reason": {"type": "string"}, "score": {"type": "integer"}}
+          }
+        }
+      }
+    },
+    "lessons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "note"],
+        "properties": {"id": {"type": "string"}, "pattern": {"type": "string"}, "note": {"type": "string"}, "source": {"type": "string"}}
+      }
+    },
+    "links": {
+      "type": "array",
+      "items": {"type": "object", "required": ["label", "url"], "properties": {"label": {"type": "string"}, "url": {"type": "string"}}}
+    },
+    "handoff": {
+      "type": "object",
+      "required": ["prompt"],
+      "properties": {
+        "prompt": {"type": "string"},
+        "brief_path": {"type": "string"},
+        "kanban_task_id": {"type": ["string", "null"]},
+        "aetherbus_event_id": {"type": ["string", "null"]}
+      }
+    },
+    "errors": {"type": "array", "items": {"type": "string"}}
+  }
+}
