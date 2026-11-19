@@ -137,6 +137,9 @@ def validate(brief: dict[str, Any]) -> list[str]:
         errs.append("repro.command is empty")
     if not brief["culprit"].get("first_red_sha"):
         errs.append("culprit.first_red_sha is empty")
+    claimed_by = brief["handoff"].get("claimed_by")
+    if claimed_by is not None and (not isinstance(claimed_by, str) or not claimed_by):
+        errs.append("handoff.claimed_by must be a non-empty string or null")
     return errs
 
 
@@ -190,6 +193,8 @@ def render_markdown(b: dict[str, Any]) -> str:
     out += [f"- {le['note']} (`{le['id']}`)" for le in b["lessons"]] or ["- None matched."]
     out += ["", "## Links", ""] + [f"- [{x['label']}]({x['url']})" for x in b["links"]]
     out += ["", "## Handoff", "", b["handoff"]["prompt"] or "(filled in when the brief is written)"]
+    if b["handoff"].get("claimed_by"):
+        out += ["", f"Claimed by `{b['handoff']['claimed_by']}` at {b['handoff'].get('claimed_at')}."]
     if b.get("errors"):
         out += ["", "## Triage gaps", ""] + [f"- {e}" for e in b["errors"]]
     return "\n".join(out) + "\n"

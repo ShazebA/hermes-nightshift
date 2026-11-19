@@ -45,6 +45,8 @@ Files live at `<briefs_dir>/<owner>__<repo>/<id>.json` and `.md`. Both are writt
 | `handoff.brief_path` | string | Absolute path of the Markdown brief |
 | `handoff.kanban_task_id` | string? | Hermes kanban card |
 | `handoff.aetherbus_event_id` | string? | CloudEvent id (UUIDv7) |
+| `handoff.claimed_by` | string? | Coding agent that picked the brief up (`nightshift claim`); unclaimed briefs are what `nightshift next` lists |
+| `handoff.claimed_at` | date-time? | When it was claimed |
 | `errors[]` | string[] | Triage gaps, for example a log that could not be fetched |
 
 ## Classification heuristic

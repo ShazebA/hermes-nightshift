@@ -111,7 +111,9 @@
         "prompt": {"type": "string"},
         "brief_path": {"type": "string"},
         "kanban_task_id": {"type": ["string", "null"]},
-        "aetherbus_event_id": {"type": ["string", "null"]}
+        "aetherbus_event_id": {"type": ["string", "null"]},
+        "claimed_by": {"type": ["string", "null"], "minLength": 1, "description": "Coding agent that picked the brief up (nightshift claim)"},
+        "claimed_at": {"type": ["string", "null"], "format": "date-time"}
       }
     },
     "errors": {"type": "array", "items": {"type": "string"}}

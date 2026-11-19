@@ -24,6 +24,7 @@ from .brief import (
 from .config import Config, ConfigError, load_config
 from .digest import render_digest
 from .gh import FixtureGh, Gh
+from .pickup import AlreadyClaimed, claim, open_briefs
 from .pipeline import Report, run_once
 from .sandbox import run_repro, strip_checkout
 from .sinks.aetherbus import broker_reachable, publish_brief
@@ -194,6 +195,51 @@ def cmd_repro(args, cfg: Config) -> int:
     return 0
 
 
+# ------------------------------------------------------------------ next / claim
+
+
+def cmd_next(args, cfg: Config) -> int:
+    if args.repo:
+        cfg.repo(args.repo)
+    rows = open_briefs(cfg.briefs_dir, args.repo)
+    if args.json:
+        print(json.dumps(rows, indent=2))
+        return 0
+    if not rows:
+        print("nightshift: no open briefs")
+        return 0
+    for r in rows:
+        print(f"{r['id']}\t{r['repo']}\t{r['kind']}\t{r['category']}/{r['confidence']:.2f}\t"
+              f"{r['created_at']}\t{r['title']}")
+        print(f"    brief: {r['brief_md']}")
+    return 0
+
+
+def cmd_claim(args, cfg: Config) -> int:
+    try:
+        res = claim(cfg, args.id, args.agent)
+    except AlreadyClaimed as e:
+        print(f"nightshift: {e}", file=sys.stderr)
+        return 1
+    h = res.brief["handoff"]
+    if args.json:
+        print(json.dumps({"id": res.brief["id"], "repo": res.brief["repo"],
+                          "claimed_by": h["claimed_by"], "claimed_at": h["claimed_at"],
+                          "already_yours": res.already_yours, "brief_json": str(res.brief_json),
+                          "brief_md": str(res.brief_md), "repro": res.brief["repro"]["command"],
+                          "kanban": res.kanban, "kanban_task_id": h.get("kanban_task_id"),
+                          "notes": res.notes}, indent=2))
+    else:
+        verb = "already claimed by you" if res.already_yours else "claimed"
+        print(f"{res.brief['id']} {verb}: {h['claimed_by']} at {h['claimed_at']}")
+        print(f"brief: {res.brief_md}")
+        print(f"repro: {res.brief['repro']['command']}")
+        print(f"kanban: {res.kanban} {h.get('kanban_task_id') or ''}".rstrip())
+    for n in res.notes:
+        print(f"nightshift: {n}", file=sys.stderr)
+    return 0
+
+
 # ------------------------------------------------------------------ digest
 
 
@@ -320,6 +366,17 @@ def build_parser() -> argparse.ArgumentParser:
     rp.add_argument("id")
     rp.add_argument("--execute", action="store_true", help="actually run it (needs sandbox.enabled)")
     rp.set_defaults(func=cmd_repro)
+
+    nx = sub.add_parser("next", help="list unclaimed briefs, newest first")
+    nx.add_argument("--repo", help="only this OWNER/REPO")
+    nx.add_argument("--json", action="store_true")
+    nx.set_defaults(func=cmd_next)
+
+    ca = sub.add_parser("claim", help="claim a brief for a coding agent (and unblock its card)")
+    ca.add_argument("id")
+    ca.add_argument("--agent", required=True, help="who is fixing it, e.g. claude-code")
+    ca.add_argument("--json", action="store_true")
+    ca.set_defaults(func=cmd_claim)
 
     dg = sub.add_parser("digest", help="summarise incidents since the last digest")
     dg.add_argument("--since", help="ISO timestamp (default: last digest)")
