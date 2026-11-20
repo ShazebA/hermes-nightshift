@@ -105,7 +105,7 @@ Set `aetherbus.enabled: true`. Add `aetherbus-mcp` to your coding agent's `.mcp.
 | `nightshift classify ID --category C --confidence X --rationale R` | Record a model or human classification; keeps the heuristic alongside |
 | `nightshift learn OWNER/REPO --pattern RE --note TEXT` | Save a lesson that future briefs match against failing logs |
 | `nightshift lessons OWNER/REPO` | List config and learned lessons |
-| `nightshift repro ID [--execute]` | Re-run the brief's repro in a throwaway Docker container (opt-in) |
+| `nightshift repro ID [--execute]` | Re-run the brief's repro in a throwaway Docker container (opt-in). Exits 3 for briefs whose repro only reads the CI log (action steps, very long scripts) |
 | `nightshift next [--repo OWNER/REPO] [--json]` | List unclaimed, unresolved briefs, newest first (for coding agents) |
 | `nightshift claim ID --agent NAME [--json]` | Mark a brief as taken (`handoff.claimed_by`); comments on and unblocks its kanban card |
 | `nightshift digest [--hours N]` | Summarize everything since the last digest |
@@ -148,7 +148,7 @@ The config lives at `./nightshift.yaml`, then `$NIGHTSHIFT_CONFIG`, then `~/.con
 
 ## Status
 
-This is alpha. The end-to-end slice (config → poll → triage → brief → kanban → AetherBus) is tested against recorded `gh` fixtures and the real `aetherbus` package. Live runs have covered `gh` polling, the kanban sink and Hermes's cron script runner. Live runs have also covered the local model working through the skill from a Hermes cron job, a Docker repro, and a publish to a real NATS broker that was then replayed and resolved through AetherBus. Not yet seen live: a failure brief from a real repo's red CI (the triage parser is tested on real public CI logs instead). See [CONTRIBUTING.md](CONTRIBUTING.md) to help.
+This is alpha. The end-to-end slice (config → poll → triage → brief → kanban → AetherBus) is tested against recorded `gh` fixtures and the real `aetherbus` package. Live runs have covered `gh` polling, the kanban sink and Hermes's cron script runner. Live runs have also covered the local model working through the skill from a Hermes cron job, a Docker repro, and a publish to a real NATS broker that was then replayed and resolved through AetherBus. Read-only polls of public repos with red CI (uv, deno, pydantic, playwright) produced six schema-valid briefs, and the bugs they exposed are fixed with trimmed copies of those logs as regression tests. Not yet seen live: a red CI run on a repo you own. See [CONTRIBUTING.md](CONTRIBUTING.md) to help.
 
 ## License
 

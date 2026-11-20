@@ -31,10 +31,12 @@ class KanbanResult:
 
 def card_body(brief: dict[str, Any], md_path: Path) -> str:
     c = brief["classification"]
+    cmd = brief["repro"]["command"]
+    repro = f"Repro:\n```bash\n{cmd}\n```\n" if "\n" in cmd else f"Repro: `{cmd}`\n"
     return (
         f"{brief['what_broke']['summary']}\n\n"
         f"Classification: {c['category']} ({c['confidence']:.2f}, {c['source']})\n"
-        f"Repro: `{brief['repro']['command']}`\n"
+        f"{repro}"
         f"Brief: {md_path}\n\n"
         f"{brief['handoff']['prompt']}"
     )

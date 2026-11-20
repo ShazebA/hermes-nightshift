@@ -201,6 +201,12 @@ def cmd_repro(args, cfg: Config) -> int:
     b = load_brief(path)
     repo = cfg.repo(b["repo"])
     sha, inner = strip_checkout(b["repro"]["command"])
+    if sha is None:
+        # Action steps and very long scripts get a `gh run view` pointer, not a local command.
+        # Running it in Docker would fail for an unrelated reason and look "reproduced".
+        print(f"nightshift: {b['id']} is not locally reproducible; its repro reads the CI log:\n"
+              f"  {b['repro']['command']}", file=sys.stderr)
+        return 3
     if not args.execute:
         print(f"would check out {sha or b['culprit']['first_red_sha']} from "
               f"{repo.path or 'GitHub'} and run in {repo.sandbox_image or cfg.sandbox.image} "

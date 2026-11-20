@@ -119,3 +119,21 @@ def test_github_managed_workflow_is_not_blamed_on_commits():
     inc = Incident("x", "o/r", "ci_failure", "t", "u", "n", {"first_red": {"event": "dynamic"}})
     c = classify("##[error]Dependabot encountered an error performing the update", inc, 17)
     assert c["category"] == "unknown" and "GitHub-managed" in c["rationale"]
+
+
+def test_heredoc_repro_parses_under_sh_as_the_sandbox_runs_it():
+    import subprocess
+
+    from nightshift.sandbox import strip_checkout
+    _, repro = _repro("hermes-nix-build")
+    sha, inner = strip_checkout(repro)
+    assert sha == "abc1234"
+    assert subprocess.run(["sh", "-n"], input=inner, text=True).returncode == 0
+
+
+def test_kanban_card_fences_a_multi_line_repro(tmp_path):
+    from nightshift.sinks.kanban import card_body
+    _, repro = _repro("hermes-nix-build")
+    brief = {"what_broke": {"summary": "s"}, "repro": {"command": repro}, "handoff": {"prompt": "p"},
+             "classification": {"category": "real", "confidence": 0.7, "source": "heuristic"}}
+    assert "```bash\n" + repro + "\n```" in card_body(brief, tmp_path / "b.md")
