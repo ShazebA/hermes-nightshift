@@ -25,7 +25,7 @@ from .brief import (
 from .config import Config, ConfigError, load_config
 from .digest import render_digest
 from .gh import FixtureGh, Gh
-from .pickup import AlreadyClaimed, claim, open_briefs
+from .pickup import AlreadyClaimed, AlreadyResolved, claim, open_briefs
 from .pipeline import Report, run_once
 from .sandbox import run_repro, strip_checkout
 from .sinks.aetherbus import broker_reachable, publish_brief
@@ -78,6 +78,10 @@ def _summary(report: Report, ns: str | None = None) -> list[str]:
     if notices:
         lines.append("Notices (digest only):")
         lines += [f"- [{h.incident.kind}] {h.incident.repo} {h.incident.title}" for h in notices]
+    if report.resolved:
+        lines.append("Recovered (no action needed):")
+        lines += [f"- id={r.id} repo={r.repo} {r.how} at {r.sha[:7]} card={r.kanban}"
+                  for r in report.resolved]
     return lines
 
 
@@ -94,12 +98,15 @@ def cmd_poll(args, cfg: Config) -> int:
                      "aetherbus": h.aetherbus, "aetherbus_event_id": h.aetherbus_event_id,
                      "notes": h.notes} for h in report.handled],
             "skipped_seen": report.skipped_seen, "errors": report.errors,
-            "republished": report.republished}, indent=2))
+            "republished": report.republished,
+            "resolved": [{"id": r.id, "repo": r.repo, "how": r.how, "sha": r.sha, "url": r.url,
+                          "kanban": r.kanban} for r in report.resolved]}, indent=2))
     else:
         mode = " (dry run: no state, kanban or AetherBus)" if args.dry_run else ""
         print(f"nightshift: {len(report.new_failures)} new failure(s), "
               f"{len(report.handled) - len(report.new_failures)} notice(s), "
-              f"{report.skipped_seen} already seen{mode}")
+              f"{report.skipped_seen} already seen"
+              + (f", {len(report.resolved)} recovered" if report.resolved else "") + mode)
         for line in _summary(report):
             print(line)
         for e in report.errors:
@@ -236,7 +243,7 @@ def cmd_next(args, cfg: Config) -> int:
 def cmd_claim(args, cfg: Config) -> int:
     try:
         res = claim(cfg, args.id, args.agent)
-    except AlreadyClaimed as e:
+    except (AlreadyClaimed, AlreadyResolved) as e:
         print(f"nightshift: {e}", file=sys.stderr)
         return 1
     h = res.brief["handoff"]
@@ -273,7 +280,9 @@ def cmd_digest(args, cfg: Config) -> int:
         rows = state.read_ledger(offset=min(state.digest_offset, size))
     for r in rows:  # pick up model/human reclassification since the ledger row was written
         if r.get("brief_json") and Path(r["brief_json"]).is_file():
-            r["classification"] = load_brief(Path(r["brief_json"]))["classification"]
+            b = load_brief(Path(r["brief_json"]))
+            r["classification"] = b["classification"]
+            r["resolution"] = b.get("resolution")
     text = render_digest(rows, since, until)
     out = cfg.state_dir / "digests" / f"{until[:10]}.md"
     out.parent.mkdir(parents=True, exist_ok=True)

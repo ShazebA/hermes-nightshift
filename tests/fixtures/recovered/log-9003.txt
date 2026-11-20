@@ -1,0 +1,22 @@
+test	Set up job	2026-11-19T06:10:05.1000000Z Current runner version: '2.330.0'
+test	Run npm test	2026-11-19T06:11:40.0000000Z ##[group]Run npm test
+test	Run npm test	2026-11-19T06:11:40.0000001Z   [36;1mnpm test[0m
+test	Run npm test	2026-11-19T06:11:40.0000002Z   shell: /usr/bin/bash -e {0}
+test	Run npm test	2026-11-19T06:11:40.0000003Z   env:
+test	Run npm test	2026-11-19T06:11:40.0000004Z     SUPABASE_URL: http://127.0.0.1:54321
+test	Run npm test	2026-11-19T06:11:40.0000005Z ##[endgroup]
+test	Run npm test	2026-11-19T06:11:41.0000000Z > webapp@0.1.0 test
+test	Run npm test	2026-11-19T06:11:41.0000001Z > vitest run
+test	Run npm test	2026-11-19T06:11:42.0000000Z  RUN  v5.0.5 /home/runner/work/webapp/webapp
+test	Run npm test	2026-11-19T06:11:43.0000000Z  ✓ src/lib/format.test.ts (6 tests) 12ms
+test	Run npm test	2026-11-19T06:11:43.1000000Z  ❯ src/lib/entries.test.ts (4 tests | 1 failed) 88ms
+test	Run npm test	2026-11-19T06:11:43.1000001Z    × listEntries > returns archived entries with archived_at 41ms
+test	Run npm test	2026-11-19T06:11:43.1000002Z      → column entries.archived_at does not exist
+test	Run npm test	2026-11-19T06:11:43.2000000Z ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+test	Run npm test	2026-11-19T06:11:43.2000001Z  FAIL  src/lib/entries.test.ts > listEntries > returns archived entries with archived_at
+test	Run npm test	2026-11-19T06:11:43.2000002Z Error: column entries.archived_at does not exist
+test	Run npm test	2026-11-19T06:11:43.2000003Z  ❯ listEntries src/lib/entries.ts:42:11
+test	Run npm test	2026-11-19T06:11:43.2000004Z  ❯ src/lib/entries.test.ts:31:20
+test	Run npm test	2026-11-19T06:11:43.3000000Z  Test Files  1 failed | 1 passed (2)
+test	Run npm test	2026-11-19T06:11:43.3000001Z       Tests  1 failed | 9 passed (10)
+test	Run npm test	2026-11-19T06:11:43.4000000Z ##[error]Process completed with exit code 1.

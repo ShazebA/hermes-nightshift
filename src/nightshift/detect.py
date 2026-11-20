@@ -206,12 +206,20 @@ def stale_branch_incidents(repo: str, graphql: dict[str, Any], keep: list[str], 
 
 
 def detect_repo(gh: Gh, repo: RepoConfig, lookback: int = 30,
-                now: datetime | None = None) -> tuple[list[Incident], list[str]]:
+                now: datetime | None = None,
+                observed: dict[str, Any] | None = None) -> tuple[list[Incident], list[str]]:
     """Run every enabled watcher for one repo. Returns (incidents, errors); one failing
-    watcher never hides the others."""
+    watcher never hides the others.
+
+    ``observed`` (optional) is filled with what the watchers actually saw, for resolving earlier
+    incidents without extra gh calls: ``observed["ci"][branch]`` is the run list and
+    ``observed["deployments"]`` is ``(deployments, status_of)`` with ``status_of`` memoised.
+    A watcher that failed leaves no entry, so nothing is resolved from missing data.
+    """
     found: list[Incident] = []
     errors: list[str] = []
     name = repo.name
+    obs = observed if observed is not None else {}
 
     def guarded(label, fn):
         try:
@@ -221,14 +229,26 @@ def detect_repo(gh: Gh, repo: RepoConfig, lookback: int = 30,
 
     if "ci" in repo.watch:
         for b in repo.branches:
-            guarded(f"ci[{b}]", lambda b=b: ci_incidents_from_runs(name, b, gh.json(
-                ["run", "list", "-R", name, "--branch", b, "-L", str(lookback),
-                 "--json", RUN_FIELDS], name) or [], now))
+            def ci(b=b):
+                runs = gh.json(["run", "list", "-R", name, "--branch", b, "-L", str(lookback),
+                                "--json", RUN_FIELDS], name) or []
+                incs = ci_incidents_from_runs(name, b, runs, now)
+                obs.setdefault("ci", {})[b] = runs
+                return incs
+            guarded(f"ci[{b}]", ci)
     if "deployments" in repo.watch:
         def deploys():
             deps = gh.json(["api", f"repos/{name}/deployments?per_page=20"], name) or []
-            return deploy_incidents(name, deps, lambda i: gh.json(
-                ["api", f"repos/{name}/deployments/{i}/statuses?per_page=5"], name) or [], now)
+            cache: dict[int, list[dict[str, Any]]] = {}
+
+            def status_of(i: int) -> list[dict[str, Any]]:
+                if i not in cache:
+                    cache[i] = gh.json(
+                        ["api", f"repos/{name}/deployments/{i}/statuses?per_page=5"], name) or []
+                return cache[i]
+            incs = deploy_incidents(name, deps, status_of, now)
+            obs["deployments"] = (deps, status_of)
+            return incs
         guarded("deployments", deploys)
     if "issues" in repo.watch:
         guarded("issues", lambda: issue_incidents(name, gh.json(

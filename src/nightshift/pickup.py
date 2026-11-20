@@ -22,6 +22,10 @@ class AlreadyClaimed(Exception):
     pass
 
 
+class AlreadyResolved(Exception):
+    pass
+
+
 def _now() -> str:
     return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -37,12 +41,12 @@ def iter_briefs(briefs_dir: Path, repo: str | None = None):
 
 
 def open_briefs(briefs_dir: Path, repo: str | None = None) -> list[dict[str, Any]]:
-    """Unclaimed briefs, newest first. Ties on created_at (one poll writes several briefs in the
+    """Unclaimed, unresolved briefs, newest first. Ties on created_at (one poll writes several briefs in the
     same second) fall back to the failure time, then the id, so the order is deterministic."""
     rows = []
     for path, b in iter_briefs(briefs_dir, repo):
         h = b.get("handoff") or {}
-        if h.get("claimed_by"):
+        if h.get("claimed_by") or b.get("resolution"):
             continue
         rows.append({
             "id": b["id"], "repo": b["repo"], "kind": b["kind"], "title": b["title"],
@@ -76,6 +80,10 @@ def claim(cfg: Config, brief_id: str, agent: str, run=subprocess.run,
     path = find_brief(cfg.briefs_dir, brief_id)
     b = load_brief(path)
     h = b["handoff"]
+    res = b.get("resolution")
+    if res:
+        raise AlreadyResolved(f"brief {brief_id} is resolved: {res['how']} at {res['sha'][:7]} "
+                              f"({res['resolved_at']}); nothing to fix")
     holder = h.get("claimed_by")
     if holder and holder != agent:
         raise AlreadyClaimed(f"brief {brief_id} was claimed by {holder} at {h.get('claimed_at')}")

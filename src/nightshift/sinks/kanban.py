@@ -99,3 +99,40 @@ def create_card(cfg: KanbanConfig, brief: dict[str, Any], md_path: Path,
               timeout=60)
     detail = "" if att.returncode == 0 else f"attach failed: {att.stderr.strip()[:200]}"
     return KanbanResult("created", task_id=str(task_id), detail=detail)
+
+
+def resolve_card(cfg: KanbanConfig, task_id: str, text: str,
+                 run=subprocess.run) -> tuple[str, str]:
+    """Tell the card its failure went green. Returns (status, detail).
+
+    Only a card still `blocked` (nobody picked it up) is completed. A card someone unblocked,
+    claimed or a worker is running gets a comment and is left alone. Flags confirmed with
+    `hermes kanban show --json` (``task.status``), `comment --author` and `complete --result`.
+    Status: closed | commented | error.
+    """
+    base = _base(cfg)
+
+    def call(name, argv):
+        try:
+            proc = run(argv, capture_output=True, text=True, timeout=60)
+        except (OSError, subprocess.TimeoutExpired) as e:
+            return None, f"kanban {name} failed: {e}"
+        if proc.returncode != 0:
+            return None, f"kanban {name} failed: {(proc.stderr or proc.stdout).strip()[:300]}"
+        return proc, ""
+
+    proc, err = call("show", base + ["show", str(task_id), "--json"])
+    if proc is None:
+        return "error", err
+    try:
+        shown = json.loads(proc.stdout)
+        status = (shown.get("task") or shown).get("status")
+    except (json.JSONDecodeError, AttributeError):
+        return "error", f"unparseable kanban show output: {proc.stdout[:200]}"
+    proc, err = call("comment", base + ["comment", str(task_id), text, "--author", "nightshift"])
+    if proc is None:
+        return "error", err
+    if status != "blocked":
+        return "commented", f"card is {status}; left open"
+    proc, err = call("complete", base + ["complete", str(task_id), "--result", text[:300]])
+    return ("closed", "") if proc is not None else ("error", err)
