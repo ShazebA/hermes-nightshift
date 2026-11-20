@@ -85,8 +85,27 @@ def load_lessons(state_dir: Path, repo: str) -> list[Lesson]:
     p = lessons_path(state_dir, repo)
     if not p.exists():
         return []
-    return [Lesson(pattern=x["pattern"], note=x["note"], id=x["id"], source=x.get("source", "learned"))
+    return [Lesson(pattern=x["pattern"], note=x["note"], id=x["id"], source=x.get("source", "learned"),
+                   incident=x.get("incident"))
             for x in yaml.safe_load(p.read_text()) or []]
+
+
+# Failure output every repo produces. A lesson that matches any of these would attach to most
+# future briefs, so it is too broad no matter how long the regex is.
+GENERIC_FAILURES = (
+    "assert 1 == 2", "E       assert 60.01 == 60.0", "AssertionError: assert False",
+    "FAILED tests/test_app.py::test_create - assert 1 == 2", "1 failed, 2 passed in 0.02s",
+    "Error: expect(received).toBe(expected) // Object.is equality",
+    "AssertionError: expected 1 to equal 2", "FAIL src/app.test.ts > renders",
+    "TypeError: Cannot read properties of undefined (reading 'id')",
+    "ReferenceError: foo is not defined", "SyntaxError: Unexpected token",
+    "ModuleNotFoundError: No module named 'foo'", "npm ERR! code ELIFECYCLE",
+    "npm ERR! Test failed.  See above for more details.", "error[E0308]: mismatched types",
+    "error: could not compile `app` due to 2 previous errors", "--- FAIL: TestCreate (0.00s)",
+    "panic: runtime error: index out of range", "Traceback (most recent call last):",
+    "Error: Process completed with exit code 1.", "##[error]Process completed with exit code 1.",
+    "Tests:       1 failed, 3 passed, 4 total", "make: *** [Makefile:12: test] Error 2",
+)
 
 
 def lesson_problems(pattern: str, incident_text: str | None = None) -> tuple[list[str], list[str]]:
@@ -99,6 +118,11 @@ def lesson_problems(pattern: str, incident_text: str | None = None) -> tuple[lis
         return [f"not a valid regex: {e}"], []
     if rx.search("") is not None or len(pattern.strip()) < 6:
         errors.append("too broad: it matches (almost) anything; use a distinctive phrase from the error")
+    else:
+        hit = next((g for g in GENERIC_FAILURES if rx.search(g)), None)
+        if hit:
+            errors.append(f"too broad: it matches generic failure output every repo prints ({hit!r}); "
+                          "a lesson needs a phrase specific to this repo's recurring cause")
     if incident_text is not None and not rx.search(incident_text):
         errors.append("does not match the failing log of the incident it came from")
     if re.search(r"[0-9a-f]{7,}|\d{4,}|\d{2}:\d{2}", pattern):
@@ -116,8 +140,9 @@ def add_lesson(state_dir: Path, repo: str, pattern: str, note: str, source: str 
         raise ValueError("lesson note is empty")
     p = lessons_path(state_dir, repo)
     rows = (yaml.safe_load(p.read_text()) or []) if p.exists() else []
-    for r in rows:  # same pattern → update the note instead of duplicating
-        if r["pattern"] == pattern:
+    for r in rows:  # same pattern, or a retry for the same incident → update in place
+        if r["pattern"] == pattern or (incident and r.get("incident") == incident):
+            r["pattern"] = pattern
             r.update(note=note.strip(), updated_at=_now())
             _atomic_write(p, yaml.safe_dump(rows, sort_keys=False))
             return Lesson(pattern=pattern, note=r["note"], id=r["id"], source=r.get("source", source))

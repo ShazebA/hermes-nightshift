@@ -218,10 +218,20 @@ def test_learn_rejects_useless_lessons_and_warns_on_narrow_ones(tmp_path, capsys
     cli.main(["-c", c, "poll", *FIX])
     capsys.readouterr()
     base = ["-c", c, "learn", "acme/webapp", "--note", "apply migrations", "--incident", "ci-ci-main-9002"]
+    assert cli.main([*base, "--pattern", r"column \S+ does not exist"]) == 2  # not classified yet
+    assert "classify ci-ci-main-9002 first" in capsys.readouterr().err
+    cli.main(["-c", c, "classify", "ci-ci-main-9002", "--category", "real", "--confidence", "0.8",
+              "--rationale", "Missing column."])
+    capsys.readouterr()
     assert cli.main([*base, "--pattern", ".*"]) == 2                       # matches everything
     assert cli.main([*base, "--pattern", "ENOSPC: no space"]) == 2         # misses its own incident
     assert "not saved" in capsys.readouterr().err
     assert cli.main([*base, "--pattern", r"column entries\.archived_at does not exist"]) == 0
     assert "specific identifier" in capsys.readouterr().err                # saved, with a nudge
     assert cli.main([*base, "--pattern", r"column \S+ does not exist"]) == 0
-    assert capsys.readouterr().err == ""
+    out = capsys.readouterr()
+    assert out.err == "" and "lesson L1 updated" in out.out  # one lesson per incident
+    assert cli.main([*base, "--pattern", r"assert \S+ == \S+"]) == 2      # generic pytest output
+    assert "generic failure output" in capsys.readouterr().err
+    from nightshift.state import load_lessons
+    assert [le.pattern for le in load_lessons(tmp_path / "state", "acme/webapp")] == [r"column \S+ does not exist"]

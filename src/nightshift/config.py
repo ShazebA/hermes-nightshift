@@ -28,6 +28,7 @@ class Lesson:
     note: str
     id: str = ""
     source: str = "config"
+    incident: str | None = None  # the incident a learned lesson came from
 
 
 @dataclass
