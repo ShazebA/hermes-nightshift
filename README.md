@@ -1,8 +1,26 @@
-# Hermes Nightshift
+<h1 align="center">Hermes Nightshift</h1>
+
+<p align="center"><b>Wake up to a brief, not a red badge.</b></p>
+
+<p align="center">
+  <a href="docs/media/nightshift.mp4"><img src="docs/media/nightshift.gif" width="880" alt="Hermes Nightshift: CI goes red at 2:14 AM, a local model triages it and writes a brief, and by 7:00 AM the digest shows every failure recovered"></a>
+</p>
+
+<p align="center">
+  <a href=".github/workflows/ci.yml"><img src="https://github.com/ShazebA/hermes-nightshift/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License: Apache 2.0"></a>
+  <img src="https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white" alt="Python 3.11+">
+  <a href="https://github.com/NousResearch/hermes-agent"><img src="https://img.shields.io/badge/runs%20on-Hermes%20Agent-f5b54a" alt="Runs on Hermes Agent"></a>
+  <a href="docs/brief-schema.md"><img src="https://img.shields.io/badge/brief-nightshift.brief%2Fv1-0a0f1f" alt="Brief schema nightshift.brief/v1"></a>
+</p>
 
 > A night shift for your GitHub repos. A cheap local model on [Hermes Agent](https://github.com/NousResearch/hermes-agent) watches CI, deployments, issues and PRs, triages failures, and writes a fixed-schema **brief** per incident. Stronger coding agents (Claude Code, Codex, Cursor) pick up the brief and do the fix, starting from finished homework instead of a red badge.
 
-[![CI](https://github.com/ShazebA/hermes-nightshift/actions/workflows/ci.yml/badge.svg)](.github/workflows/ci.yml) [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+| 🌙 Overnight | ☀️ By morning |
+|---|---|
+| Polls `gh` every 15 min for failed runs and deploys, new issues, PRs and stale branches | One brief per incident: error, failing test, **repro command**, **culprit commit**, known repo lessons |
+| Classifies each failure as real, flaky or infra; the local model reviews it | A Hermes kanban card and an optional [AetherBus](https://github.com/ShazebA/aetherbus) event, ready for Claude Code, Codex or Cursor |
+| Quiet night? The model is never woken (`{"wakeAgent": false}`) | A digest of what broke, and what went green again and how (fix or flaky re-run) |
 
 The split is deliberate. Watching, reproducing and remembering happen many times a night and must be cheap, so they run as deterministic Python plus a small local model (the default target is a Qwen 35B-A3B on llama.cpp). Expensive models run only for the fix, and they start from a brief that already has the failing log, a repro command, the culprit commit range and the repo's known gotchas.
 
