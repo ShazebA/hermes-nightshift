@@ -367,7 +367,10 @@ def repro_command(digest: LogDigest, sha: str, repo: RepoConfig, run_id: Any = N
         # Run it the way GitHub does (bash -e) without joining lines into broken shell.
         env = [f"# step env (set these first): {' '.join(digest.env)}"] if digest.env else []
         body = "\n".join([*env, *script])
-        return f"git checkout {sha} && {setup}bash -e <<'NIGHTSHIFT_STEP'\n{body}\nNIGHTSHIFT_STEP"
+        tag = "NIGHTSHIFT_STEP"
+        while tag in script:  # a script line equal to the delimiter would end the heredoc early
+            tag += "_"
+        return f"git checkout {sha} && {setup}bash -e <<'{tag}'\n{body}\n{tag}"
     else:
         target = digest.command or "<failing step command not found in log>"
         if digest.env:

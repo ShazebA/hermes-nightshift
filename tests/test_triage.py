@@ -131,3 +131,23 @@ def test_last_green_outside_lookback_is_found_with_a_targeted_query(tmp_path):
     t = triage(FixtureGh(tmp_path), inc, RepoConfig(name=REPO), [])
     assert inc.data["last_green"]["databaseId"] == 40
     assert "last green" not in " ".join(t.errors)
+
+
+def test_github_managed_workflow_skips_the_culprit_range(gh):
+    found, _ = detect_repo(gh, RepoConfig(name=REPO, watch=["ci"]), now=NOW)
+    ci = next(i for i in found if i.id == "ci-ci-main-9002")
+    ci.data["first_red"]["event"] = "dynamic"  # how Dependabot / CodeQL default setup runs show up
+    calls = []
+    orig = gh.json
+    gh.json = lambda args, repo: calls.append(args) or orig(args, repo)
+    t = triage(gh, ci, RepoConfig(name=REPO), [])
+    assert t.commits == [] and t.suspected == [] and t.compare_url is None
+    assert not any("compare" in " ".join(a) for a in calls)
+    assert t.classification["category"] == "unknown"
+
+
+def test_heredoc_delimiter_never_collides_with_the_script():
+    from nightshift.triage import LogDigest, repro_command
+    d = LogDigest(command="cat <<NIGHTSHIFT_STEP\nhi\nNIGHTSHIFT_STEP")
+    r = repro_command(d, "abc", RepoConfig(name="o/r"))
+    assert r.startswith("git checkout abc && bash -e <<'NIGHTSHIFT_STEP_'\n") and r.endswith("\nNIGHTSHIFT_STEP_")
