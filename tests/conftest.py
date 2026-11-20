@@ -62,6 +62,8 @@ class FakeHermes:
         else:
             if "complete" in argv:
                 self.status[argv[argv.index("complete") + 1]] = "done"
+            if "unblock" in argv:
+                self.status[argv[-1]] = "ready"
             out = "ok"
         return subprocess.CompletedProcess(argv, 0, stdout=out, stderr="")
 

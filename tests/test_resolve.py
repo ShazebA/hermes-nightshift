@@ -107,7 +107,7 @@ def test_green_on_a_commit_from_later_in_the_streak_is_a_rerun():
     assert ci_resolution(_brief(), runs)["how"] == "rerun"
 
 
-def test_kanban_blocked_card_is_closed_claimed_card_only_commented(cfg, fake_hermes):
+def test_blocked_card_is_closed_card_unblocked_by_someone_else_only_commented(cfg, fake_hermes):
     c = cfg(kanban={"enabled": True, "board": "nightshift"})
     first = pipeline.run_once(c, FixtureGh(RED_MAIN), now=NOW, kanban_run=fake_hermes)
     cards = {h.incident.id: h.kanban_task_id for h in first.new_failures}
@@ -160,3 +160,48 @@ def test_digest_reports_recovered_separately(tmp_path, capsys):
     assert "**Recovered (green again)**" in out
     assert "fixed by `d3adb33`" in out and "re-run of `9c4d7e2`, no code change" in out
     assert "(since recovered: fix)" in out
+
+
+def test_claimed_card_is_closed_when_the_fix_goes_green(cfg, fake_hermes):
+    from nightshift.pickup import claim
+    c = cfg(kanban={"enabled": True, "board": "nightshift"})
+    first = pipeline.run_once(c, FixtureGh(RED_MAIN), now=NOW, kanban_run=fake_hermes)
+    cards = {h.incident.id: h.kanban_task_id for h in first.new_failures}
+    claim(c, CI, "claude-code", run=fake_hermes)
+    assert fake_hermes.status[cards[CI]] == "ready"  # claim unblocks the card
+    r = pipeline.run_once(c, FixtureGh(RECOVERED), now=NOW, kanban_run=fake_hermes)
+    assert {x.id: x.kanban for x in r.resolved}[CI] == "closed"
+
+
+def test_running_card_is_only_commented_even_if_claimed(cfg, fake_hermes):
+    from nightshift.pickup import claim
+    c = cfg(kanban={"enabled": True, "board": "nightshift"})
+    first = pipeline.run_once(c, FixtureGh(RED_MAIN), now=NOW, kanban_run=fake_hermes)
+    cards = {h.incident.id: h.kanban_task_id for h in first.new_failures}
+    claim(c, CI, "claude-code", run=fake_hermes)
+    fake_hermes.status[cards[CI]] = "running"
+    r = pipeline.run_once(c, FixtureGh(RECOVERED), now=NOW, kanban_run=fake_hermes)
+    assert {x.id: x.kanban for x in r.resolved}[CI] == "commented"
+    assert not any("complete" in a and cards[CI] in a for a in fake_hermes.calls)
+
+
+def test_resolved_brief_is_never_announced_when_the_broker_comes_back(cfg, monkeypatch):
+    import sys
+    import types
+
+    from nightshift.sinks import aetherbus as ab
+    monkeypatch.setitem(sys.modules, "aetherbus", types.ModuleType("aetherbus"))
+    published = []
+
+    async def fake_publish(cfg_, json_path, brief, outbox):
+        published.append(brief["id"])
+        return "evt"
+    monkeypatch.setattr(ab, "_publish", fake_publish)
+    c = cfg(aetherbus={"enabled": True})
+    monkeypatch.setattr(ab, "broker_reachable", lambda url: False)
+    pipeline.run_once(c, FixtureGh(RED_MAIN), now=NOW)
+    # Broker comes back on the same poll that sees the recovery.
+    monkeypatch.setattr(ab, "broker_reachable", lambda url: True)
+    r = pipeline.run_once(c, FixtureGh(RECOVERED), now=NOW)
+    assert len(r.resolved) == 3 and published == [] and r.republished == []
+    assert State(c.state_dir).pending_publish() == []

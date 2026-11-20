@@ -69,8 +69,6 @@ def run_once(cfg: Config, gh: Gh, *, dry_run: bool = False, briefs_dir: Path | N
     state = State(cfg.state_dir)
     out_dir = briefs_dir or cfg.briefs_dir
     report = Report()
-    if not dry_run:
-        _retry_pending(cfg, state, report)
     for repo in cfg.repos:
         observed: dict[str, Any] = {}
         incidents, errors = detect_repo(gh, repo, cfg.lookback_runs, now, observed=observed)
@@ -104,6 +102,10 @@ def run_once(cfg: Config, gh: Gh, *, dry_run: bool = False, briefs_dir: Path | N
         if not dry_run:
             _resolve_open(cfg, state, repo.name, observed, report, now, kanban_run)
     if not dry_run:
+        # After resolving, so a brief that went green while the broker was down is never
+        # announced; briefs first tried in this pass wait for the next one.
+        fresh = {State.key(h.incident.repo, h.incident.id) for h in report.handled}
+        _retry_pending(cfg, state, report, skip=fresh)
         stamp = (now or datetime.now(UTC)).strftime("%Y-%m-%dT%H:%M:%SZ")
         for e in report.errors:  # surfaced by the digest so a broken watcher can't go unnoticed
             state.append_ledger({"id": "watch-error", "repo": e.split(" ", 1)[0], "kind": "watch_error",
@@ -136,8 +138,14 @@ def _handoff(cfg: Config, h: Handled, kanban_run=None) -> None:
         write_brief(b, h.brief_json.parent.parent)
 
 
-def _retry_pending(cfg: Config, state: State, report: Report) -> None:
+def _retry_pending(cfg: Config, state: State, report: Report, skip: set[str] = frozenset()) -> None:
     for key, rec in state.pending_publish():
+        if key in skip:
+            continue
+        if rec.get("resolved"):
+            # Went green before the broker came back: announcing it now would look like new work.
+            rec["aetherbus"] = "skipped-resolved"
+            continue
         path = Path(rec.get("brief_json") or "")
         if not path.is_file():
             rec["aetherbus"] = "error"
@@ -176,8 +184,9 @@ def _resolve_open(cfg: Config, state: State, repo: str, observed: dict[str, Any]
             what = ("fixed by commit " if res["how"] == "fix" else
                     "went green on a re-run of the same commit (no code change) at ") + res["sha"][:7]
             kw = {"run": kanban_run} if kanban_run else {}
-            r.kanban, detail = resolve_card(cfg.kanban, task_id,
-                                            f"Nightshift: {b['title']} {what}. {res.get('url') or ''}".strip(), **kw)
+            text = f"Nightshift: {b['title']} {what}. {res.get('url') or ''}".strip()
+            r.kanban, detail = resolve_card(cfg.kanban, task_id, text,
+                                            claimed=bool(b["handoff"].get("claimed_by")), **kw)
             if detail:
                 rec["kanban_resolution_detail"] = detail
         rec.update(resolved=stamp, resolution=res["how"], resolved_sha=res["sha"], kanban_resolution=r.kanban)

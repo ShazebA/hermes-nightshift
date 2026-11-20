@@ -101,13 +101,15 @@ def create_card(cfg: KanbanConfig, brief: dict[str, Any], md_path: Path,
     return KanbanResult("created", task_id=str(task_id), detail=detail)
 
 
-def resolve_card(cfg: KanbanConfig, task_id: str, text: str,
+def resolve_card(cfg: KanbanConfig, task_id: str, text: str, claimed: bool = False,
                  run=subprocess.run) -> tuple[str, str]:
     """Tell the card its failure went green. Returns (status, detail).
 
-    Only a card still `blocked` (nobody picked it up) is completed. A card someone unblocked,
-    claimed or a worker is running gets a comment and is left alone. Flags confirmed with
-    `hermes kanban show --json` (``task.status``), `comment --author` and `complete --result`.
+    The card is completed when nobody is working it through Hermes: still `blocked`, or
+    `ready`/`todo` because `nightshift claim` unblocked it for an outside coding agent (that
+    agent's fix is what went green). Any other state (running, review, or unblocked by someone
+    else) gets a comment only. Never `--force`. Flags confirmed with `hermes kanban show --json`
+    (``task.status``), `comment --author` and `complete --result`.
     Status: closed | commented | error.
     """
     base = _base(cfg)
@@ -132,7 +134,8 @@ def resolve_card(cfg: KanbanConfig, task_id: str, text: str,
     proc, err = call("comment", base + ["comment", str(task_id), text, "--author", "nightshift"])
     if proc is None:
         return "error", err
-    if status != "blocked":
+    if not (status == "blocked" or (claimed and status in ("ready", "todo"))):
         return "commented", f"card is {status}; left open"
     proc, err = call("complete", base + ["complete", str(task_id), "--result", text[:300]])
-    return ("closed", "") if proc is not None else ("error", err)
+    # A failed complete (e.g. open parent cards) still left the comment on the card.
+    return ("closed", "") if proc is not None else ("commented", err)
