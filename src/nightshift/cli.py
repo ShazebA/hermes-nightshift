@@ -300,6 +300,7 @@ def cmd_brief(args, cfg: Config) -> int:
 
 
 def cmd_doctor(args, cfg: Config) -> int:
+    print(f"config: {cfg.source_path}")
     checks = []
     gh = shutil.which("gh")
     checks.append(("gh on PATH", bool(gh), gh or "install https://cli.github.com"))
@@ -323,6 +324,9 @@ def cmd_doctor(args, cfg: Config) -> int:
             "docker") else None
         checks.append(("docker daemon", bool(p and p.returncode == 0), "start Docker"))
     checks.append(("briefs dir writable", _writable(cfg.briefs_dir), str(cfg.briefs_dir)))
+    if hb and not args.no_hermes:
+        from .hermes_check import hermes_checks
+        checks += hermes_checks(hb)
     for name, ok, hint in checks:
         print(f"[{'ok' if ok else '!!'}] {name}" + ("" if ok else f"  ({hint})"))
     return 0 if all(ok for _, ok, _ in checks) else 1
@@ -413,8 +417,10 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("schema", help="print the path of the brief JSON Schema").set_defaults(
         func=lambda a, c: print(SCHEMA_PATH) or 0, needs_config=False)
 
-    sub.add_parser("doctor", help="check gh, hermes, AetherBus and docker").set_defaults(
-        func=cmd_doctor)
+    dr = sub.add_parser("doctor", help="check gh, AetherBus, docker and the Hermes install "
+                        "(gateway, cron jobs, skill, model server)")
+    dr.add_argument("--no-hermes", action="store_true", help="skip the Hermes install checks")
+    dr.set_defaults(func=cmd_doctor)
     return p
 
 
