@@ -18,14 +18,21 @@ TS = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z ?")
 EXCERPT_LINES = 60
 
 # (pattern, category, confidence, why). First match wins, so order is priority.
+# Runner/platform failures: infra wherever they appear in the failing step.
 INFRA_PATTERNS = [
     r"No space left on device", r"The runner has received a shutdown signal",
     r"lost communication with the server", r"The operation was canceled",
+    r"Error: Process completed with exit code 137", r"Unable to locate executable file",
+    r"githubstatus\.com", r"failed with 50[234]\b", r"Artifact not found for name",
+    r"Unable to download artifact",
+]
+# Network errors: infra only when no failing test was identified. Test suites print these
+# while exercising error paths, so one ECONNRESET among 800 test lines is not an outage.
+NETWORK_PATTERNS = [
     r"Could not resolve host", r"ECONNRESET", r"ETIMEDOUT", r"EAI_AGAIN",
     r"toomanyrequests|rate limit exceeded|API rate limit", r"50[234] (Bad Gateway|Service Unavailable|Gateway Time)",
-    r"npm ERR! network", r"Unable to locate executable file", r"Error: Process completed with exit code 137",
-    r"githubstatus\.com", r"failed with 50[234]\b", r"Artifact not found for name",
-    r"Unable to download artifact", r"Internal Server Error.{0,40}(api\.github|ghcr\.io|registry)",
+    r"npm ERR! network", r"Internal Server Error.{0,40}(api\.github|ghcr\.io|registry)",
+    r"stream error: stream ID \d+",
 ]
 FLAKY_PATTERNS = [
     r"Test timed out in \d+ms", r"Timeout of \d+ms exceeded", r"exceeded timeout of \d+",
@@ -49,6 +56,13 @@ TEST_LOCATORS = [
     # playwright "1) [chromium] › tests/e2e/x.spec.ts:14:5 › title"
     (re.compile(r"\]\s+›\s+(\S+\.(?:test|spec)\.[cm]?[jt]sx?:\d+)"), "playwright"),
 ]
+# GitHub marks each script line of a run step with this colour code; the parser turns it into
+# SCRIPT so the step's script survives ANSI stripping.
+SCRIPT_MARK = "\x1b[36;1m"
+SCRIPT = "\x00"  # not whitespace: rstrip() must not eat it on blank script lines
+# `Run owner/action@ref`, a local `./action` or `docker://image`: no script to run locally.
+ACTION_RE = re.compile(r"^(?:[\w.-]+/[\w.-]+(?:/[\w./-]+)?@\S+|\./[\w./-]+|docker://\S+)$")
+MAX_SCRIPT_LINES = 40
 PATH_RE = re.compile(r"(?<![\w/.-])((?:[\w.-]+/)+[\w.-]+\.[A-Za-z]{1,5})(?::\d+)?")
 
 
@@ -56,7 +70,9 @@ PATH_RE = re.compile(r"(?<![\w/.-])((?:[\w.-]+/)+[\w.-]+\.[A-Za-z]{1,5})(?::\d+)
 class LogDigest:
     job: str = ""
     step: str = ""
-    command: str = ""
+    command: str = ""  # the step's script (newline-separated) or its Run header
+    action: str = ""  # set when the failing step is an action (`uses:`), not a script
+    env: list[str] = field(default_factory=list)  # names (not values) from the step's env block
     excerpt: list[str] = field(default_factory=list)
     signature: str = ""
     error: str = ""
@@ -81,7 +97,10 @@ def parse_failed_log(text: str) -> LogDigest:
         if len(parts) < 3:
             continue
         job, step, line = parts
-        jobs.setdefault(job, []).append((step, ANSI.sub("", TS.sub("", line)).rstrip()))
+        line = TS.sub("", line)
+        if line.startswith(SCRIPT_MARK):
+            line = SCRIPT + line[len(SCRIPT_MARK):]
+        jobs.setdefault(job, []).append((step, ANSI.sub("", line).rstrip()))
     if not jobs:
         return LogDigest()
     failing = [(j, _failing_step(rows)) for j, rows in jobs.items()]
@@ -91,9 +110,11 @@ def parse_failed_log(text: str) -> LogDigest:
         failing = [(last_job, ("", [ln for _, ln in jobs[last_job]]))]
     real = [f for f in failing if not _is_aggregator(f[0], f[1][1])]
     job, (step, lines) = (real or failing)[0]
-    d = LogDigest(job=job, step=step, command=_run_command(lines))
+    d = LogDigest(job=job, step=step)
+    d.command, d.action, d.env = _step_command(lines)
     d.aggregator = not real
-    body = [ln for ln in _drop_groups(lines) if not ln.startswith(("##[start-action", "##[end-action"))]
+    body = [ln.removeprefix(SCRIPT) for ln in _drop_groups(lines)
+            if not ln.startswith(("##[start-action", "##[end-action"))]
     d.segment = body
     d.excerpt = _excerpt(body)
     d.signature = signature(body)
@@ -154,21 +175,48 @@ def extract_paths(lines: list[str]) -> list[str]:
     return list(seen)[:30]
 
 
-def _run_command(lines: list[str]) -> str:
-    """The script of a run step. GitHub prints ``##[group]Run <first line>`` and then the full
-    script indented by two spaces, followed by ``shell:``/``env:`` lines."""
+def _step_command(lines: list[str]) -> tuple[str, str, list[str]]:
+    """(command, action, env names) of the failing step, from GitHub's step header.
+
+    Current logs print ``##[group]Run <first line>``, then every script line marked with a
+    colour code (SCRIPT here), then ``shell:``/``env:``/``with:`` at column 0 with indented
+    values. Older logs indent the script by two spaces instead. An action step has ``with:``
+    inputs and no script.
+    """
     for i, ln in enumerate(lines):
-        if ln.startswith("##[group]Run "):
-            script = []
-            for nxt in lines[i + 1:]:
-                if nxt.startswith("##[endgroup]") or not nxt.startswith(" "):
+        if not ln.startswith("##[group]Run "):
+            continue
+        header = ln.removeprefix("##[group]Run ").strip()
+        rest = lines[i + 1:i + 400]
+        script = []
+        for nxt in rest:
+            if not nxt.startswith(SCRIPT):
+                break
+            script.append(nxt[len(SCRIPT):])
+        if not script:  # older format: two-space indented script
+            for nxt in rest:
+                if (nxt.startswith("##[endgroup]") or not nxt.startswith(" ")
+                        or re.match(r"^\s+(shell|env|with):", nxt)):
                     break
-                if re.match(r"^\s+(shell|env):", nxt):
-                    break
-                if nxt.strip():
-                    script.append(nxt.strip())
-            return " && ".join(script) if script else ln.removeprefix("##[group]Run ").strip()
-    return ""
+                script.append(nxt[2:] if nxt.startswith("  ") else nxt.strip())
+        while script and not script[-1].strip():
+            script.pop()
+        env: list[str] = []
+        in_env = False
+        for nxt in rest:
+            if nxt.startswith("##[endgroup]"):
+                break
+            if re.match(r"^\s*env:\s*$", nxt):
+                in_env = True
+                continue
+            m = re.match(r"^\s+([A-Za-z_][A-Za-z0-9_]*):", nxt)
+            if in_env and m:
+                env.append(m.group(1))
+            elif in_env:
+                in_env = False
+        action = header if not script and ACTION_RE.match(header) else ""
+        return ("\n".join(script) if script else header), action, env
+    return "", "", []
 
 
 def _excerpt(lines: list[str]) -> list[str]:
@@ -219,9 +267,15 @@ def first_error(lines: list[str]) -> str:
 
 
 def classify(log_text: str, incident: Incident, culprit_commits: int,
-             aggregator: bool = False) -> dict[str, Any]:
+             aggregator: bool = False, test_target: str = "", failure_text: str = "") -> dict[str, Any]:
     """Heuristic classification over the failing step's text. Returns {category, confidence,
-    source, rationale}."""
+    source, rationale}.
+
+    Once a failing test is identified, network and timing patterns only count when they are in
+    the failure itself (``failure_text``: signature and first error). A big test log prints
+    ECONNRESET or "timeout exceeded" while exercising error paths, and that is not the failure.
+    """
+    soft_text = failure_text if test_target else log_text
     data = incident.data
     if incident.kind == "ci_failure" and data.get("green_on_red_sha"):
         return _c("flaky", 0.8, "The same commit both failed and passed this workflow (re-run "
@@ -230,10 +284,18 @@ def classify(log_text: str, incident: Incident, culprit_commits: int,
         m = re.search(pat, log_text, re.I)
         if m:
             return _c("infra", 0.75, f"Log matches infrastructure pattern: {m.group(0)!r}.")
+    for pat in NETWORK_PATTERNS:
+        m = re.search(pat, soft_text, re.I)
+        if m:
+            return _c("infra", 0.7, f"The failure matches network error pattern: {m.group(0)!r}.")
+    if is_github_managed(incident):
+        return _c("unknown", 0.4, "GitHub-managed workflow (Dependabot, CodeQL default setup and "
+                  "similar run with event 'dynamic'): repo commits rarely cause these; check the "
+                  "workflow's own log and its configuration.")
     if re.search(r"\b\d+ flaky\b", log_text) and not re.search(r"\b\d+ failed\b", log_text):
         return _c("flaky", 0.7, "The test runner itself reports flaky tests and no hard failures.")
     for pat in FLAKY_PATTERNS:
-        m = re.search(pat, log_text, re.I)
+        m = re.search(pat, soft_text, re.I)
         if m:
             return _c("flaky", 0.55, f"Log matches timing/flake pattern: {m.group(0)!r}.")
     if not log_text.strip():
@@ -280,8 +342,19 @@ def _stem(p: str) -> str:
     return re.sub(r"(\.(test|spec))?\.[^.]+$", "", name)
 
 
-def repro_command(digest: LogDigest, sha: str, repo: RepoConfig) -> str:
+def is_github_managed(incident: Incident) -> bool:
+    return incident.kind == "ci_failure" and (incident.data.get("first_red") or {}).get("event") == "dynamic"
+
+
+def repro_command(digest: LogDigest, sha: str, repo: RepoConfig, run_id: Any = None) -> str:
     setup = f"{repo.repro_setup} && " if repo.repro_setup else ""
+    view = f"gh run view {run_id} -R {repo.name} --log-failed" if run_id else ""
+    rerun = f"gh run rerun {run_id} --failed -R {repo.name}" if run_id else "re-run the job on GitHub"
+    script = digest.command.splitlines()
+    if not digest.runner and view and (digest.action or len(script) > MAX_SCRIPT_LINES):
+        why = (f"the failing step is the action {digest.action}, which only runs inside GitHub Actions"
+               if digest.action else f"the failing step is a {len(script)}-line script; read it in the log")
+        return f"{view}  # {why}. To re-run it: {rerun}"
     if digest.runner == "vitest" and "jest" in digest.command:
         target = f"npx jest {digest.test_target}"
     elif digest.runner == "vitest":
@@ -290,8 +363,15 @@ def repro_command(digest: LogDigest, sha: str, repo: RepoConfig) -> str:
         target = f"python -m pytest {digest.test_target}"
     elif digest.runner == "playwright":
         target = f"npx playwright test {digest.test_target}"
+    elif len(script) > 1:
+        # Run it the way GitHub does (bash -e) without joining lines into broken shell.
+        env = [f"# step env (set these first): {' '.join(digest.env)}"] if digest.env else []
+        body = "\n".join([*env, *script])
+        return f"git checkout {sha} && {setup}bash -e <<'NIGHTSHIFT_STEP'\n{body}\nNIGHTSHIFT_STEP"
     else:
         target = digest.command or "<failing step command not found in log>"
+        if digest.env:
+            target += f"  # step env (set these first): {' '.join(digest.env)}"
     return f"git checkout {sha} && {setup}{target}"
 
 
@@ -373,18 +453,23 @@ def triage(gh: Gh, incident: Incident, repo: RepoConfig, lessons: list[Lesson]) 
         excerpt=[log_text] if log_text else [], signature=normalize(log_text),
         paths=extract_paths([log_text]))
     try:
-        commits, files, compare_url = _compare(gh, incident.repo, base, head)
+        # GitHub-managed workflows don't build the repo's code, so a commit range would blame noise.
+        commits, files, compare_url = (([], [], None) if is_github_managed(incident)
+                                       else _compare(gh, incident.repo, base, head))
     except GhError as e:
         errors.append(f"compare: {e}")
         commits, files, compare_url = [], [], None
     text_for_rules = "\n".join(digest.excerpt) + "\n" + digest.signature
     step_text = "\n".join(digest.segment) if digest.segment else log_text
-    cls = classify(step_text, incident, len(commits), aggregator=digest.aggregator)
+    cls = classify(step_text, incident, len(commits), aggregator=digest.aggregator,
+                   test_target=digest.test_target,
+                   failure_text=f"{digest.signature}\n{digest.error}")
     return Triage(
         digest=digest, log_text=log_text, classification=cls, commits=commits,
         changed_files=files, compare_url=compare_url,
         suspected=suspected_files(files, digest.paths, digest.test_target),
-        repro=repro_command(digest, head, repo) if incident.kind == "ci_failure"
+        repro=repro_command(digest, head, repo, d["latest_red"]["databaseId"])
+        if incident.kind == "ci_failure"
         else build_repro(head, repo),
         lessons=matching_lessons(lessons, text_for_rules),
         errors=errors,

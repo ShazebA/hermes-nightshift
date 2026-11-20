@@ -33,7 +33,7 @@ Files live at `<briefs_dir>/<owner>__<repo>/<id>.json` and `.md`. Both are writt
 | `what_broke.error` | string? | First concrete `Error:`-style line, verbatim |
 | `what_broke.test_target` | string? | Failing test file (vitest/jest), `file::test` (pytest) or `file:line` (playwright) |
 | `what_broke.log_excerpt` | string[] ≤ 80 | Error-dense window of the failing step, with the step script and env stripped |
-| `repro.command` | string | `git checkout <first red sha> && <setup> && <narrowest command>` |
+| `repro.command` | string | `git checkout <first red sha> && <setup> && <narrowest command>`. The narrowest command is the failing test when one is found, else the step's script (multi-line scripts run as `bash -e <<'NIGHTSHIFT_STEP'`, with the step's env var names, never values, in a comment). When the step is an action (`uses:`) or a script over 40 lines, it is a read-only `gh run view <id> --log-failed` with the re-run command in a comment |
 | `repro.verified` | bool | True only after a sandbox run reproduced the failure |
 | `repro.sandbox` | object? | `image, exit_code, reproduced, ran_at, output_tail` |
 | `culprit.last_green_sha` / `first_red_sha` | string | From the same workflow and branch |
@@ -62,9 +62,13 @@ Files live at `<briefs_dir>/<owner>__<repo>/<id>.json` and `.md`. Both are writt
 The first matching rule wins:
 
 1. The same SHA both failed and passed this workflow → `flaky` (0.8)
-2. Log matches a runner, network, disk, rate-limit or registry pattern → `infra` (0.75)
-3. Log matches a timeout or flake pattern → `flaky` (0.55)
-4. No log → `unknown` (0.2)
-5. Otherwise `real`: 0.7 with a culprit commit range, 0.5 without
+2. Log matches a runner, disk or GitHub platform pattern → `infra` (0.75)
+3. A network or rate-limit pattern → `infra` (0.7)
+4. A GitHub-managed workflow (event `dynamic`: Dependabot, CodeQL default setup) → `unknown` (0.4), and no culprit commit range is computed
+5. The test runner reports flaky tests and no failures → `flaky` (0.7); a timeout or flake pattern → `flaky` (0.55)
+6. No log → `unknown` (0.2)
+7. Otherwise `real`: 0.7 with a culprit commit range, 0.5 without
+
+Once a failing test is identified, the network patterns (rule 3) and the timeout patterns (rule 5) only look at the failure itself (signature and first error), not the whole log: test suites print `ECONNRESET` or "timeout exceeded" while exercising error paths, and a real Playwright run did exactly that.
 
 The model refines this through `nightshift classify`. The prompt gives it a decision table, not open-ended reasoning, so a small local model can do it reliably.

@@ -1,0 +1,67 @@
+BiDi (bidi-chromium, false)	UNKNOWN STEP	﻿2026-11-20T00:28:09.4826091Z Current runner version: '2.338.2'
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:28:09.4830600Z Runner name: 'playwright-x64-ubuntu24-64-core-1078590643'
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:28:09.4831239Z Runner group name: 'playwright-runners'
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:29:08.5176791Z ##[group]Run xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- npm run biditest -- --retries=0 --project=bidi-chromium* --workers 16
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:29:08.5177365Z [36;1mxvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- npm run biditest -- --retries=0 --project=bidi-chromium* --workers 16[0m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:29:08.5194225Z shell: /usr/bin/bash -e {0}
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:29:08.5194363Z env:
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:29:08.5194477Z   FORCE_COLOR: 1
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:29:08.5194604Z   PWTEST_USE_BIDI_EXPECTATIONS: 
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:29:08.5194751Z ##[endgroup]
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.4793613Z [31m  1) [bidi-chromium-library] › tests/library/beforeunload.spec.ts:20:1 › BU-001 should close browser with beforeunload page [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.4793938Z 
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.4794148Z     Error: browser.newPage: Protocol error (emulation.setMediaFeaturesOverride): unknown command
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.4794528Z     Message: Unknown command 'emulation.setMediaFeaturesOverride'.
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.4794692Z 
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.4795057Z      [90m 20 |[39m it([32m'BU-001 should close browser with beforeunload page'[39m[33m,[39m [36masync[39m ({ server[33m,[39m browserType }) [33m=>[39m {
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.4795661Z      [90m 21 |[39m   [36mconst[39m browser [33m=[39m [36mawait[39m browserType[33m.[39mlaunch()[33m;[39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.4796132Z     [31m[1m>[22m[39m[90m 22 |[39m   [36mconst[39m page [33m=[39m [36mawait[39m browser[33m.[39mnewPage()[33m;[39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.4796494Z      [90m    |[39m                              [31m[1m^[22m[39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.4796934Z      [90m 23 |[39m   [36mawait[39m page[33m.[39mgoto(server[33m.[39m[33mPREFIX[39m [33m+[39m [32m'/beforeunload.html'[39m)[33m;[39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.4797399Z      [90m 24 |[39m   [90m// We have to interact with a page so that 'beforeunload' handlers[39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.4797680Z      [90m 25 |[39m   [90m// fire.[39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.4798026Z     [2m    at /home/runner/work/playwright/playwright/tests/library/beforeunload.spec.ts:22:30[22m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.4798246Z 
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.4798671Z [2m    Error Context: test-results/beforeunload-BU-001-should-7f6b0-wser-with-beforeunload-page-bidi-chromium-library/error-context.md[22m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.4799002Z 
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.4799384Z [31m  2) [bidi-chromium-library] › tests/library/beforeunload.spec.ts:30:1 › BU-002 should close browsercontext with beforeunload page [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.6152279Z [31m  333) [bidi-chromium-library] › tests/library/browsercontext-fetch.spec.ts:1560:1 › FE-177 should retry on ECONNRESET [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.6152284Z 
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.6152467Z     Error: browser.newContext: Protocol error (emulation.setMediaFeaturesOverride): unknown command
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.6152595Z     Message: Unknown command 'emulation.setMediaFeaturesOverride'.
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.6152683Z 
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.6152786Z     [90m   at [39mconfig/browserTest.ts:111
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.6152790Z 
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.6153022Z      [90m 109 |[39m   _contextFactory[33m:[39m [36masync[39m ({ _contextFactory }[33m,[39m use) [33m=>[39m {
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.7899572Z [31m  646) [bidi-chromium-library] › tests/library/browsertype-launch.spec.ts:88:1 › BT-013 should handle exception and report launch log [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.7899577Z 
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.7899685Z     [31mTest timeout of 15000ms exceeded.[39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.7899689Z 
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:41.7899935Z     Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoContain[2m([22m[32mexpected[39m[2m) // indexOf[22m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1803141Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:78:1 › WO-005 should have timestamp on worker console messages [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1803439Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:95:1 › WO-006 should not report console logs from workers twice [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1803716Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:108:1 › WO-007 should have JSHandles for console logs [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1803992Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:120:1 › WO-008 should evaluate [2m───────────────[22m[39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1804273Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:129:1 › WO-009 should report console event on the worker [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1804664Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:151:1 › WO-010 should report console event on the worker when not listening on page or context [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1804945Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:169:1 › WO-011 should report errors [2m──────────[22m[39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1805219Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:182:1 › WO-012 should clear upon navigation [2m──[22m[39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1805507Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:195:1 › WO-013 should clear upon cross-process navigation [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1805870Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:208:1 › WO-014 should attribute network activity for worker inside iframe to the iframe [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1806129Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:226:1 › WO-015 should report network activity [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1806437Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:246:1 › WO-016 should report network activity on worker creation [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1806741Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:262:1 › WO-017 should report worker script as network request [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1807073Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:281:1 › WO-018 should report worker script as network request after redirect [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1807388Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:306:1 › WO-019 should dispatch console messages when page has workers [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1807700Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:320:1 › WO-020 should report and intercept network from nested worker [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1807963Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:351:1 › WO-021 should support extra http headers [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1808293Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:370:1 › WO-022 should support offline [2m────────[22m[39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1808730Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:386:1 › WO-023 should resolve worker script allHeaders in main frame [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1809037Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:400:1 › WO-024 should resolve worker script allHeaders in iframe [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1809396Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:416:1 › WO-025 should resolve worker script allHeaders in nested worker inside iframe [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1809728Z [31m    [bidi-chromium-page] › tests/page/workers.spec.ts:441:1 › WO-032 should run a shared worker after redirected dedicated workers [39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1809805Z [33m  76 skipped[39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1809884Z [33m  132 did not run[39m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:43.1809992Z [32m  879 passed[39m[2m (4.5m)[22m
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:48.4748991Z ##[error]Process completed with exit code 1.
+BiDi (bidi-chromium, false)	UNKNOWN STEP	2026-11-20T00:33:48.4809697Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9

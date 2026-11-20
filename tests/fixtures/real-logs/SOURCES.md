@@ -11,3 +11,6 @@ These are `gh run view <id> --log-failed` output from public repositories, trimm
 | hermes-nix-build.log | https://github.com/NousResearch/hermes-agent/actions/runs/44624210497 |
 | ruff-clippy.log | https://github.com/astral-sh/ruff/actions/runs/44619679195 |
 | playwright-android.log | https://github.com/microsoft/playwright/actions/runs/44612888928 |
+| playwright-bidi.log | https://github.com/microsoft/playwright/actions/runs/44646088926 |
+| uv-long-script.log | https://github.com/astral-sh/uv/actions/runs/44624178401 |
+| pydantic-action-step.log | https://github.com/pydantic/pydantic/actions/runs/44661974225 |
