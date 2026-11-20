@@ -1,0 +1,432 @@
+cargo clippy	UNKNOWN STEP	﻿2026-11-19T21:32:28.0338359Z Current runner version: '2.338.2'
+cargo clippy	UNKNOWN STEP	2026-11-19T21:32:28.0344901Z Runner name: 'github-ubuntu-24.04-x86_64-4-1003572862'
+cargo clippy	UNKNOWN STEP	2026-11-19T21:32:28.0345736Z Runner group name: 'default'
+cargo clippy	UNKNOWN STEP	2026-11-19T21:32:29.2087219Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+cargo clippy	UNKNOWN STEP	2026-11-19T21:32:29.2088583Z with:
+cargo clippy	UNKNOWN STEP	2026-11-19T21:32:29.2089156Z   persist-credentials: false
+cargo clippy	UNKNOWN STEP	2026-11-19T21:32:34.4168661Z ##[group]Run Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+cargo clippy	UNKNOWN STEP	2026-11-19T21:32:34.4169065Z with:
+cargo clippy	UNKNOWN STEP	2026-11-19T21:32:34.4169276Z   save-if: false
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:10.1167706Z ##[group]Run cargo clippy --workspace --all-targets --all-features --locked
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:10.1168265Z [36;1mcargo clippy --workspace --all-targets --all-features --locked[0m
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:10.1181490Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:10.1181912Z env:
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:10.1182295Z   UV_LOCKED: 1
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:10.1182516Z   CARGO_INCREMENTAL: 0
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4397392Z [1m[96mhelp[0m: there is a variant with a similar name
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4427069Z      [1m[94m|[0m
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4437701Z [1m[94m1786[0m [91m- [0m        Rule::[91mMissingBlankLineBetweenMethods[0m,
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4467529Z [1m[94m1786[0m [92m+ [0m        Rule::[92mMissingBlankLineBeforeMethod[0m,
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4487161Z      [1m[94m|[0m
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4496735Z 
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4528471Z [1m[91merror[E0599][0m[1m: no variant, associated function, or constant named `MissingBlankLinesTopLevel` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4547321Z     [1m[94m--> [0mcrates/ruff_workspace/src/configuration.rs:1787:15
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4577137Z      [1m[94m|[0m
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4667656Z [1m[94m1787[0m [1m[94m|[0m         Rule::MissingBlankLinesTopLevel,
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4686837Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4696825Z 
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4728135Z [1m[91merror[E0599][0m[1m: no variant, associated function, or constant named `MissingBlankLinesAfterFunctionOrClass` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4737308Z     [1m[94m--> [0mcrates/ruff_workspace/src/configuration.rs:1790:15
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4767058Z      [1m[94m|[0m
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4787474Z [1m[94m1790[0m [1m[94m|[0m         Rule::MissingBlankLinesAfterFunctionOrClass,
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4817946Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4907079Z 
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4938525Z [1m[91merror[E0599][0m[1m: no variant, associated function, or constant named `MissingBlankLinesBeforeNestedDefinition` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4967656Z     [1m[94m--> [0mcrates/ruff_workspace/src/configuration.rs:1791:15
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4968393Z      [1m[94m|[0m
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4969258Z [1m[94m1791[0m [1m[94m|[0m         Rule::MissingBlankLinesBeforeNestedDefinition,
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4970888Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4971929Z      [1m[94m|[0m
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4972541Z [1m[96mhelp[0m: there is a variant with a similar name
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4973179Z      [1m[94m|[0m
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4973974Z [1m[94m1791[0m [91m- [0m        Rule::[91mMissingBlankLinesBeforeNestedDefinition[0m,
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4975019Z [1m[94m1791[0m [92m+ [0m        Rule::[92mMissingBlankLineBeforeNestedDefinition[0m,
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4975764Z      [1m[94m|[0m
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:39.4976059Z 
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:41.2424464Z [1m[92m    Checking[0m ruff_markdown v0.0.23 (/home/runner/work/ruff/ruff/crates/ruff_markdown)
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:41.3548168Z [1m[92m    Checking[0m ruff_server v0.0.23 (/home/runner/work/ruff/ruff/crates/ruff_server)
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:41.3828016Z [1mFor more information about this error, try `rustc --explain E0599`.[0m
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:41.3945015Z [1m[91merror[0m: could not compile `ruff_workspace` (lib test) due to 4 previous errors
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:41.3978401Z [1m[33mwarning[0m: build failed, waiting for other jobs to finish...
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:53.3917332Z ##[error]Process completed with exit code 101.
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:53.4068363Z Post job cleanup.
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:53.4890603Z [command]/usr/bin/git version
+cargo clippy	UNKNOWN STEP	2026-11-19T21:33:53.4928338Z git version 2.56.1
+cargo hawk	UNKNOWN STEP	﻿2026-11-19T21:32:28.2233764Z Current runner version: '2.338.2'
+cargo hawk	UNKNOWN STEP	2026-11-19T21:32:28.2238505Z Runner name: 'github-ubuntu-24.04-x86_64-4-1003572861'
+cargo hawk	UNKNOWN STEP	2026-11-19T21:32:28.2239519Z Runner group name: 'default'
+cargo hawk	UNKNOWN STEP	2026-11-19T21:32:32.1360359Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+cargo hawk	UNKNOWN STEP	2026-11-19T21:32:32.1360928Z with:
+cargo hawk	UNKNOWN STEP	2026-11-19T21:32:32.1361203Z   persist-credentials: false
+cargo hawk	UNKNOWN STEP	2026-11-19T21:32:42.6047512Z ##[group]Run rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal
+cargo hawk	UNKNOWN STEP	2026-11-19T21:32:42.6048064Z [36;1mrustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:32:42.9205785Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+cargo hawk	UNKNOWN STEP	2026-11-19T21:33:40.9589356Z ##[group]Run cargo hawk check --color=always -D warnings
+cargo hawk	UNKNOWN STEP	2026-11-19T21:33:40.9589681Z [36;1mcargo hawk check --color=always -D warnings[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:33:40.9614927Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+cargo hawk	UNKNOWN STEP	2026-11-19T21:33:40.9615188Z env:
+cargo hawk	UNKNOWN STEP	2026-11-19T21:33:40.9615345Z   UV_LOCKED: 1
+cargo hawk	UNKNOWN STEP	2026-11-19T21:33:40.9615502Z   CARGO_INCREMENTAL: 0
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3940089Z [1m[94m1786[0m [1m[94m|[0m         Rule::MissingBlankLineBetweenMethods,
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3940909Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3941512Z      [1m[94m|[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3941886Z [1m[96mhelp[0m: there is a variant with a similar name
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3942255Z      [1m[94m|[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3942736Z [1m[94m1786[0m [91m- [0m        Rule::[91mMissingBlankLineBetweenMethods[0m,
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3943368Z [1m[94m1786[0m [92m+ [0m        Rule::[92mMissingBlankLineBeforeMethod[0m,
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3943844Z      [1m[94m|[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3944019Z 
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3944699Z [1m[91merror[E0599][0m[1m: no variant, associated function, or constant named `MissingBlankLinesTopLevel` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3945363Z     [1m[94m--> [0mcrates/ruff_workspace/src/configuration.rs:1787:15
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3945709Z      [1m[94m|[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3946076Z [1m[94m1787[0m [1m[94m|[0m         Rule::MissingBlankLinesTopLevel,
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3946743Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3947078Z 
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3948035Z [1m[91merror[E0599][0m[1m: no variant, associated function, or constant named `MissingBlankLinesAfterFunctionOrClass` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3948711Z     [1m[94m--> [0mcrates/ruff_workspace/src/configuration.rs:1790:15
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3949288Z      [1m[94m|[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3949665Z [1m[94m1790[0m [1m[94m|[0m         Rule::MissingBlankLinesAfterFunctionOrClass,
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3950408Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3951007Z 
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3951614Z [1m[91merror[E0599][0m[1m: no variant, associated function, or constant named `MissingBlankLinesBeforeNestedDefinition` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3952328Z     [1m[94m--> [0mcrates/ruff_workspace/src/configuration.rs:1791:15
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3952645Z      [1m[94m|[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3953047Z [1m[94m1791[0m [1m[94m|[0m         Rule::MissingBlankLinesBeforeNestedDefinition,
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3953730Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3954191Z      [1m[94m|[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3954501Z [1m[96mhelp[0m: there is a variant with a similar name
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3954826Z      [1m[94m|[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3955206Z [1m[94m1791[0m [91m- [0m        Rule::[91mMissingBlankLinesBeforeNestedDefinition[0m,
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3955729Z [1m[94m1791[0m [92m+ [0m        Rule::[92mMissingBlankLineBeforeNestedDefinition[0m,
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3956099Z      [1m[94m|[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3956236Z 
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3956477Z [1mFor more information about this error, try `rustc --explain E0599`.[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3956938Z [1m[31merror[0m: [1minstrumented Cargo check failed with exit status: 101[0m
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.3965244Z ##[error]Process completed with exit code 1.
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.4074161Z Post job cleanup.
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.4078575Z ##[start-action display=Track workspace artifacts;id=__798d3af0-36b3-4571-a4a3-1ec8e471285e.__selfRepository_2]
+cargo hawk	UNKNOWN STEP	2026-11-19T21:35:56.4081773Z ##[end-action id=__798d3af0-36b3-4571-a4a3-1ec8e471285e.__selfRepository_2;outcome=skipped;conclusion=skipped;duration_ms=0]
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	﻿2026-11-19T21:32:43.0826720Z Current runner version: '2.338.1'
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:32:43.0857370Z Runner name: 'nsc-runner-kbausd4dc1t90'
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:32:43.0858020Z Runner group name: 'Default'
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:32:51.1148070Z ##[group]Run astral-sh/github-actions/demudhra@67dc9ee1ddc113eccd8116e7b949fb6cdcd89889
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:32:51.1148620Z env:
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:32:51.1148820Z   UV_LOCKED: 1
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:32:51.1319600Z ##[group]Run # https://emudhra.we-have-a-problem.com/#macos-curl
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:32:51.1320020Z [36;1m# https://emudhra.we-have-a-problem.com/#macos-curl[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:32:51.1320290Z [36;1msubjects=([0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:33:58.5314970Z ##[group]Run uv run --locked --only-dev cargo nextest run --all-features --profile ci
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:33:58.5315370Z [36;1muv run --locked --only-dev cargo nextest run --all-features --profile ci[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:33:58.5315610Z [36;1mcargo test --all-features --doc[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:33:58.5335950Z shell: /opt/homebrew/bin/bash --noprofile --norc -e -o pipefail {0}
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:33:58.5336210Z env:
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:33:58.5336340Z   UV_LOCKED: 1
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.6925900Z [1m[96mhelp[0m: there is a variant with a similar name
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.6926080Z      [1m[94m|[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.6926310Z [1m[94m1786[0m [91m- [0m        Rule::[91mMissingBlankLineBetweenMethods[0m,
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.6929430Z [1m[94m1786[0m [92m+ [0m        Rule::[92mMissingBlankLineBeforeMethod[0m,
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.6929650Z      [1m[94m|[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.6929720Z 
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.6961150Z [1m[91merror[E0599][0m[1m: no variant, associated function, or constant named `MissingBlankLinesTopLevel` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.6961690Z     [1m[94m--> [0mcrates/ruff_workspace/src/configuration.rs:1787:15
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.6961910Z      [1m[94m|[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.6962130Z [1m[94m1787[0m [1m[94m|[0m         Rule::MissingBlankLinesTopLevel,
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.6962580Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.6962840Z 
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7006490Z [1m[91merror[E0599][0m[1m: no variant, associated function, or constant named `MissingBlankLinesAfterFunctionOrClass` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7007070Z     [1m[94m--> [0mcrates/ruff_workspace/src/configuration.rs:1790:15
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7007320Z      [1m[94m|[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7007600Z [1m[94m1790[0m [1m[94m|[0m         Rule::MissingBlankLinesAfterFunctionOrClass,
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7008060Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7008330Z 
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7049890Z [1m[91merror[E0599][0m[1m: no variant, associated function, or constant named `MissingBlankLinesBeforeNestedDefinition` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7050410Z     [1m[94m--> [0mcrates/ruff_workspace/src/configuration.rs:1791:15
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7050620Z      [1m[94m|[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7050910Z [1m[94m1791[0m [1m[94m|[0m         Rule::MissingBlankLinesBeforeNestedDefinition,
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7051380Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7051760Z      [1m[94m|[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7051930Z [1m[96mhelp[0m: there is a variant with a similar name
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7052150Z      [1m[94m|[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7052420Z [1m[94m1791[0m [91m- [0m        Rule::[91mMissingBlankLinesBeforeNestedDefinition[0m,
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7052850Z [1m[94m1791[0m [92m+ [0m        Rule::[92mMissingBlankLineBeforeNestedDefinition[0m,
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7053170Z      [1m[94m|[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7053280Z 
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:16.7238070Z [1m[92m   Compiling[0m ruff_wasm v0.17.6 (/Users/runner/work/ruff/ruff/crates/ruff_wasm)
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:17.7342400Z [1mFor more information about this error, try `rustc --explain E0599`.[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:17.7382650Z [1m[91merror[0m: could not compile `ruff_workspace` (lib test) due to 4 previous errors
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:17.7383040Z [1m[33mwarning[0m: build failed, waiting for other jobs to finish...
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:34.2023120Z [31;1merror[0m: command `[1m/Users/runner/.rustup/toolchains/1.100.0-aarch64-apple-darwin/bin/cargo test --no-run --message-format json-render-diagnostics --all-features[0m` exited with code [1m101[0m
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:34.2056510Z ##[error]Process completed with exit code 101.
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:34.2311060Z Post job cleanup.
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:34.2317790Z ##[start-action display=Run astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2;id=__260d2686-fa7c-4b52-9763-4d2f77f34b56.__astral-sh_setup-uv]
+cargo test (namespace-profile-macos-15)	UNKNOWN STEP	2026-11-19T21:34:34.2326080Z ##[end-action id=__260d2686-fa7c-4b52-9763-4d2f77f34b56.__astral-sh_setup-uv;outcome=skipped;conclusion=skipped;duration_ms=0]
+cargo build (msrv)	UNKNOWN STEP	﻿2026-11-19T21:32:57.5843658Z Current runner version: '2.338.0'
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:32:57.6005553Z Runner name: 'depot-bwnc3x98v0'
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:32:57.6007269Z Runner group name: 'default'
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:32:59.2418427Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:32:59.2421111Z with:
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:32:59.2422227Z   persist-credentials: false
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:05.8920617Z ##[group]Run SebRollen/toml-action@b1b3628f55fc3a28208d4203ada8b737e9687876
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:05.8921241Z with:
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:05.8921481Z   file: Cargo.toml
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:27.5707318Z ##[group]Run cargo "+${MSRV}" test --no-run --all-features
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:27.5708008Z [36;1mcargo "+${MSRV}" test --no-run --all-features[0m
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:27.5719237Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:27.5719616Z env:
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:27.5719829Z   UV_LOCKED: 1
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:27.5720031Z   CARGO_INCREMENTAL: 0
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2215601Z      [1m[94m|[0m
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2245827Z [1m[96mhelp[0m: there is a variant with a similar name
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2285556Z      [1m[94m|[0m
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2287201Z [1m[94m1786[0m [91m- [0m        Rule::[91mMissingBlankLineBetweenMethods[0m,
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2326396Z [1m[94m1786[0m [92m+ [0m        Rule::[92mMissingBlankLineBeforeMethod[0m,
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2365606Z      [1m[94m|[0m
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2395036Z 
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2416378Z [1m[91merror[E0599][0m[1m: no variant, associated function, or constant named `MissingBlankLinesTopLevel` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2455644Z     [1m[94m--> [0mcrates/ruff_workspace/src/configuration.rs:1787:15
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2485566Z      [1m[94m|[0m
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2515739Z [1m[94m1787[0m [1m[94m|[0m         Rule::MissingBlankLinesTopLevel,
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2540565Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2541828Z 
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2548034Z [1m[91merror[E0599][0m[1m: no variant, associated function, or constant named `MissingBlankLinesAfterFunctionOrClass` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2550063Z     [1m[94m--> [0mcrates/ruff_workspace/src/configuration.rs:1790:15
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2550891Z      [1m[94m|[0m
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2551747Z [1m[94m1790[0m [1m[94m|[0m         Rule::MissingBlankLinesAfterFunctionOrClass,
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2552999Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2553816Z 
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2555300Z [1m[91merror[E0599][0m[1m: no variant, associated function, or constant named `MissingBlankLinesBeforeNestedDefinition` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2556712Z     [1m[94m--> [0mcrates/ruff_workspace/src/configuration.rs:1791:15
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2557473Z      [1m[94m|[0m
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2558203Z [1m[94m1791[0m [1m[94m|[0m         Rule::MissingBlankLinesBeforeNestedDefinition,
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2559493Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2560460Z      [1m[94m|[0m
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2561109Z [1m[96mhelp[0m: there is a variant with a similar name
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2561744Z      [1m[94m|[0m
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2562707Z [1m[94m1791[0m [91m- [0m        Rule::[91mMissingBlankLinesBeforeNestedDefinition[0m,
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2563705Z [1m[94m1791[0m [92m+ [0m        Rule::[92mMissingBlankLineBeforeNestedDefinition[0m,
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2564481Z      [1m[94m|[0m
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:52.2565045Z 
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:53.0455635Z [1m[92m   Compiling[0m ruff_wasm v0.17.6 (/home/runner/work/ruff/ruff/crates/ruff_wasm)
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:53.7412091Z [1mFor more information about this error, try `rustc --explain E0599`.[0m
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:53.7479845Z [1m[91merror[0m: could not compile `ruff_workspace` (lib test) due to 4 previous errors
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:33:53.7506250Z [1m[33mwarning[0m: build failed, waiting for other jobs to finish...
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:34:14.5966818Z ##[error]Process completed with exit code 101.
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:34:14.6086175Z Post job cleanup.
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:34:14.6745916Z [command]/usr/bin/git version
+cargo build (msrv)	UNKNOWN STEP	2026-11-19T21:34:14.6773160Z git version 2.56.0
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	﻿2026-11-19T21:32:39.7919256Z Current runner version: '2.338.2'
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:32:39.7927662Z Runner name: 'nsc-runner-tjl7u1v4qdi46'
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:32:39.7928130Z Runner group name: 'Default'
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:32:48.1425571Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:32:48.1426268Z with:
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:32:48.1426449Z   persist-credentials: false
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:32:53.9692425Z ##[group]Run Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:32:53.9692847Z with:
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:32:53.9693006Z   save-if: false
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:21.7851101Z ##[group]Run uv run --locked --only-dev cargo nextest run --all-features --profile ci
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:21.7851578Z [36;1muv run --locked --only-dev cargo nextest run --all-features --profile ci[0m
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:21.7851898Z [36;1mcargo test --all-features --doc[0m
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:21.7861428Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:21.7861728Z env:
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:21.7861870Z   UV_LOCKED: 1
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:51.9786953Z [1m[96mhelp[0m: there is a variant with a similar name
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:51.9787229Z      [1m[96m|[0m
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:51.9787577Z [1m[96m1786[0m [91m- [0m        Rule::[91mMissingBlankLineBetweenMethods[0m,
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:51.9788036Z [1m[96m1786[0m [92m+ [0m        Rule::[92mMissingBlankLineBeforeMethod[0m,
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:51.9788556Z      [1m[96m|[0m
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:51.9788656Z 
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:51.9871184Z [1m[91merror[E0599][0m[1m[97m: no variant, associated function, or constant named `MissingBlankLinesTopLevel` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:51.9872195Z     [1m[96m--> [0mcrates\ruff_workspace\src\configuration.rs:1787:15
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:51.9872632Z      [1m[96m|[0m
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:51.9873017Z [1m[96m1787[0m [1m[96m|[0m         Rule::MissingBlankLinesTopLevel,
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:51.9873756Z      [1m[96m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:51.9879181Z 
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:51.9972619Z [1m[91merror[E0599][0m[1m[97m: no variant, associated function, or constant named `MissingBlankLinesAfterFunctionOrClass` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:51.9973565Z     [1m[96m--> [0mcrates\ruff_workspace\src\configuration.rs:1790:15
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:51.9973989Z      [1m[96m|[0m
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:51.9974411Z [1m[96m1790[0m [1m[96m|[0m         Rule::MissingBlankLinesAfterFunctionOrClass,
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:51.9975167Z      [1m[96m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:51.9975675Z 
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:52.0069481Z [1m[91merror[E0599][0m[1m[97m: no variant, associated function, or constant named `MissingBlankLinesBeforeNestedDefinition` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:52.0070375Z     [1m[96m--> [0mcrates\ruff_workspace\src\configuration.rs:1791:15
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:52.0070751Z      [1m[96m|[0m
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:52.0071170Z [1m[96m1791[0m [1m[96m|[0m         Rule::MissingBlankLinesBeforeNestedDefinition,
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:52.0072114Z      [1m[96m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:52.0072654Z      [1m[96m|[0m
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:52.0072959Z [1m[96mhelp[0m: there is a variant with a similar name
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:52.0073283Z      [1m[96m|[0m
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:52.0073692Z [1m[96m1791[0m [91m- [0m        Rule::[91mMissingBlankLinesBeforeNestedDefinition[0m,
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:52.0074269Z [1m[96m1791[0m [92m+ [0m        Rule::[92mMissingBlankLineBeforeNestedDefinition[0m,
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:52.0074669Z      [1m[96m|[0m
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:52.0074850Z 
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:52.2678076Z [1m[92m   Compiling[0m ruff_wasm v0.17.6 (D:\a\ruff\ruff\crates\ruff_wasm)
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:53.3508677Z [1m[97mFor more information about this error, try `rustc --explain E0599`.[0m
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:53.3632077Z [1m[91merror[0m: could not compile `ruff_workspace` (lib test) due to 4 previous errors
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:35:53.3632611Z [1m[93mwarning[0m: build failed, waiting for other jobs to finish...
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:36:17.9747863Z [31;1merror[0m: command `[1m'C:\Users\runneradmin\.rustup\toolchains\1.100.0-x86_64-pc-windows-msvc\bin\cargo.exe' test --no-run --message-format json-render-diagnostics --all-features[0m` exited with code [1m101[0m
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:36:17.9840383Z ##[error]Process completed with exit code 101.
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:36:17.9944498Z Post job cleanup.
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:36:17.9947085Z ##[start-action display=Run astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2;id=__018d0562-b73c-4446-a9db-e045f9f5a221.__astral-sh_setup-uv]
+cargo test (namespace-profile-windows-2022-x86-64-16x32)	UNKNOWN STEP	2026-11-19T21:36:17.9948834Z ##[end-action id=__018d0562-b73c-4446-a9db-e045f9f5a221.__astral-sh_setup-uv;outcome=skipped;conclusion=skipped;duration_ms=0]
+cargo test (linux, release)	UNKNOWN STEP	﻿2026-11-19T21:33:00.2419337Z Current runner version: '2.338.0'
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:33:00.2544169Z Runner name: 'depot-mhm162gzvq'
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:33:00.2545482Z Runner group name: 'default'
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:33:03.5433230Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:33:03.5435247Z with:
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:33:03.5435942Z   persist-credentials: false
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:33:07.8101346Z ##[group]Run Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:33:07.8102169Z with:
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:33:07.8102433Z   save-if: false
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:33:28.9798116Z ##[group]Run uv run --locked --only-dev cargo nextest run --cargo-profile profiling --all-features
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:33:28.9798887Z [36;1muv run --locked --only-dev cargo nextest run --cargo-profile profiling --all-features[0m
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:33:28.9819490Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:33:28.9820016Z env:
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:33:28.9820266Z   UV_LOCKED: 1
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:33:28.9820506Z   CARGO_INCREMENTAL: 0
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5021658Z      [1m[94m|[0m
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5022064Z [1m[96mhelp[0m: there is a variant with a similar name
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5022480Z      [1m[94m|[0m
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5022974Z [1m[94m1786[0m [91m- [0m        Rule::[91mMissingBlankLineBetweenMethods[0m,
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5023749Z [1m[94m1786[0m [92m+ [0m        Rule::[92mMissingBlankLineBeforeMethod[0m,
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5024299Z      [1m[94m|[0m
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5024549Z 
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5037261Z [1m[91merror[E0599][0m[1m: no variant, associated function, or constant named `MissingBlankLinesTopLevel` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5054507Z     [1m[94m--> [0mcrates/ruff_workspace/src/configuration.rs:1787:15
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5055322Z      [1m[94m|[0m
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5055836Z [1m[94m1787[0m [1m[94m|[0m         Rule::MissingBlankLinesTopLevel,
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5056599Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5057122Z 
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5117145Z [1m[91merror[E0599][0m[1m: no variant, associated function, or constant named `MissingBlankLinesAfterFunctionOrClass` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5118739Z     [1m[94m--> [0mcrates/ruff_workspace/src/configuration.rs:1790:15
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5119286Z      [1m[94m|[0m
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5123194Z [1m[94m1790[0m [1m[94m|[0m         Rule::MissingBlankLinesAfterFunctionOrClass,
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5124360Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5124962Z 
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5235229Z [1m[91merror[E0599][0m[1m: no variant, associated function, or constant named `MissingBlankLinesBeforeNestedDefinition` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5236628Z     [1m[94m--> [0mcrates/ruff_workspace/src/configuration.rs:1791:15
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5237054Z      [1m[94m|[0m
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5237552Z [1m[94m1791[0m [1m[94m|[0m         Rule::MissingBlankLinesBeforeNestedDefinition,
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5238325Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5238855Z      [1m[94m|[0m
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5239176Z [1m[96mhelp[0m: there is a variant with a similar name
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5239551Z      [1m[94m|[0m
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5239963Z [1m[94m1791[0m [91m- [0m        Rule::[91mMissingBlankLinesBeforeNestedDefinition[0m,
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5240542Z [1m[94m1791[0m [92m+ [0m        Rule::[92mMissingBlankLineBeforeNestedDefinition[0m,
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5240939Z      [1m[94m|[0m
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:12.5241095Z 
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:13.9275066Z [1mFor more information about this error, try `rustc --explain E0599`.[0m
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:13.9345127Z [1m[91merror[0m: could not compile `ruff_workspace` (lib test) due to 4 previous errors
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:13.9365043Z [1m[33mwarning[0m: build failed, waiting for other jobs to finish...
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:46.6655939Z [31;1merror[0m: command `[1m/home/runner/.rustup/toolchains/1.100.0-x86_64-unknown-linux-gnu/bin/cargo test --no-run --message-format json-render-diagnostics --all-features --profile profiling[0m` exited with code [1m101[0m
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:46.6697476Z ##[error]Process completed with exit code 101.
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:46.6803874Z Post job cleanup.
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:46.6807077Z ##[start-action display=Run astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2;id=__6b8ef1e5-5c4e-46cb-8d96-8e10d5025a6d.__astral-sh_setup-uv]
+cargo test (linux, release)	UNKNOWN STEP	2026-11-19T21:34:46.6809093Z ##[end-action id=__6b8ef1e5-5c4e-46cb-8d96-8e10d5025a6d.__astral-sh_setup-uv;outcome=skipped;conclusion=skipped;duration_ms=0]
+cargo test (linux)	UNKNOWN STEP	﻿2026-11-19T21:32:56.0930713Z Current runner version: '2.338.0'
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:32:56.1053664Z Runner name: 'depot-jxcp4h8pzs'
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:32:56.1054986Z Runner group name: 'default'
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:00.1050946Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:00.1052591Z with:
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:00.1053191Z   persist-credentials: false
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:06.1942835Z ##[group]Run Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:06.1943610Z with:
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:06.1943880Z   shared-key: ruff-linux-debug
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:32.0195763Z ##[group]Run uv run --locked --only-dev cargo insta test --all-features --unreferenced reject --test-runner nextest --disable-nextest-doctest
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:32.0196739Z [36;1muv run --locked --only-dev cargo insta test --all-features --unreferenced reject --test-runner nextest --disable-nextest-doctest[0m
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:32.0217233Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:32.0217701Z env:
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:32.0217941Z   UV_LOCKED: 1
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:32.0218187Z   CARGO_INCREMENTAL: 0
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4127552Z      [1m[94m|[0m
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4127934Z [1m[94m1786[0m [91m- [0m        Rule::[91mMissingBlankLineBetweenMethods[0m,
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4128461Z [1m[94m1786[0m [92m+ [0m        Rule::[92mMissingBlankLineBeforeMethod[0m,
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4128821Z      [1m[94m|[0m
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4128980Z 
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4183507Z [1m[91merror[E0599][0m[1m: no variant, associated function, or constant named `MissingBlankLinesTopLevel` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4184369Z     [1m[94m--> [0mcrates/ruff_workspace/src/configuration.rs:1787:15
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4184805Z      [1m[94m|[0m
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4185306Z [1m[94m1787[0m [1m[94m|[0m         Rule::MissingBlankLinesTopLevel,
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4185987Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4186416Z 
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4255236Z [1m[91merror[E0599][0m[1m: no variant, associated function, or constant named `MissingBlankLinesAfterFunctionOrClass` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4256091Z     [1m[94m--> [0mcrates/ruff_workspace/src/configuration.rs:1790:15
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4256439Z      [1m[94m|[0m
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4256816Z [1m[94m1790[0m [1m[94m|[0m         Rule::MissingBlankLinesAfterFunctionOrClass,
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4257555Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4258019Z 
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4324125Z [1m[91merror[E0599][0m[1m: no variant, associated function, or constant named `MissingBlankLinesBeforeNestedDefinition` found for enum `ruff_linter::codes::Rule` in the current scope[0m
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4325113Z     [1m[94m--> [0mcrates/ruff_workspace/src/configuration.rs:1791:15
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4325466Z      [1m[94m|[0m
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4325847Z [1m[94m1791[0m [1m[94m|[0m         Rule::MissingBlankLinesBeforeNestedDefinition,
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4326615Z      [1m[94m|[0m               [1m[91m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m [1m[91mvariant, associated function, or constant not found in `ruff_linter::codes::Rule`[0m
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4327125Z      [1m[94m|[0m
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4327409Z [1m[96mhelp[0m: there is a variant with a similar name
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4327716Z      [1m[94m|[0m
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4328139Z [1m[94m1791[0m [91m- [0m        Rule::[91mMissingBlankLinesBeforeNestedDefinition[0m,
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4328696Z [1m[94m1791[0m [92m+ [0m        Rule::[92mMissingBlankLineBeforeNestedDefinition[0m,
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4329082Z      [1m[94m|[0m
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.4329231Z 
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:53.6097168Z [1m[92m   Compiling[0m ruff_wasm v0.17.6 (/home/runner/work/ruff/ruff/crates/ruff_wasm)
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:54.6855648Z [1mFor more information about this error, try `rustc --explain E0599`.[0m
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:54.6899082Z [1m[91merror[0m: could not compile `ruff_workspace` (lib test) due to 4 previous errors
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:33:54.6900835Z [1m[33mwarning[0m: build failed, waiting for other jobs to finish...
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:34:14.6938980Z [31;1merror[0m: command `[1m/home/runner/.rustup/toolchains/1.100.0-x86_64-unknown-linux-gnu/bin/cargo test --no-run --message-format json-render-diagnostics --all-features[0m` exited with code [1m101[0m
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:34:14.7396833Z [1minfo[0m: no snapshots to review
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:34:14.7557941Z ##[error]Process completed with exit code 1.
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:34:14.7725828Z Post job cleanup.
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:34:14.7729032Z ##[start-action display=Run astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2;id=__9dea4137-fa69-4dfe-b05f-1fea626bfa8f.__astral-sh_setup-uv]
+cargo test (linux)	UNKNOWN STEP	2026-11-19T21:34:14.7730989Z ##[end-action id=__9dea4137-fa69-4dfe-b05f-1fea626bfa8f.__astral-sh_setup-uv;outcome=skipped;conclusion=skipped;duration_ms=0]
+all required checks passed	UNKNOWN STEP	﻿2026-11-19T21:36:04.7726387Z Current runner version: '2.338.2'
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:04.7758258Z Runner name: 'github-ubuntu-24.04-x86_64-2-1003572947'
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:04.7759971Z Runner group name: 'default'
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:10.9383378Z ##[group]Run astral-sh/ruff/.github/actions/setup-ruff-workspace@e5867ff9b0b7d732d237922e8b5b3ca210ca8d2d
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:10.9384519Z with:
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:10.9384793Z   group: jaq
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:10.9540831Z ##[group]Run case "$RUNNER_OS/$RUNNER_ARCH" in
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:10.9541352Z [36;1mcase "$RUNNER_OS/$RUNNER_ARCH" in[0m
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:10.9541701Z [36;1m  Linux/X64)[0m
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:12.7337898Z ##[group]Run failing=$(echo "$NEEDS_JSON" | jaq -r 'to_entries[] | select(.value.result != "success" and (.value.result != "skipped" or .key == "cargo-cooldowns")) | "\(.key): \(.value.result)"')
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:12.7339296Z [36;1mfailing=$(echo "$NEEDS_JSON" | jaq -r 'to_entries[] | select(.value.result != "success" and (.value.result != "skipped" or .key == "cargo-cooldowns")) | "\(.key): \(.value.result)"')[0m
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:12.7340035Z [36;1mif [ -n "$failing" ]; then[0m
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:12.7340307Z [36;1m  echo "$failing"[0m
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:12.7340540Z [36;1m  exit 1[0m
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:12.7340751Z [36;1mfi[0m
+all required checks passed	UNKNOWN STEP	  },
+all required checks passed	UNKNOWN STEP	  "cargo-test-wasm": {
+all required checks passed	UNKNOWN STEP	    "result": "success",
+all required checks passed	UNKNOWN STEP	    "outputs": {}
+all required checks passed	UNKNOWN STEP	  },
+all required checks passed	UNKNOWN STEP	  "cargo-build-msrv": {
+all required checks passed	UNKNOWN STEP	    "result": "failure",
+all required checks passed	UNKNOWN STEP	    "outputs": {}
+all required checks passed	UNKNOWN STEP	  },
+all required checks passed	UNKNOWN STEP	  "shellcheck": {
+all required checks passed	UNKNOWN STEP	    "result": "success",
+all required checks passed	UNKNOWN STEP	    "outputs": {}
+all required checks passed	UNKNOWN STEP	  },
+all required checks passed	UNKNOWN STEP	  "scripts": {
+all required checks passed	UNKNOWN STEP	    "result": "success",
+all required checks passed	UNKNOWN STEP	    "outputs": {}
+all required checks passed	UNKNOWN STEP	  },
+all required checks passed	UNKNOWN STEP	  "prek": {
+all required checks passed	UNKNOWN STEP	    "result": "success",
+all required checks passed	UNKNOWN STEP	    "outputs": {}
+all required checks passed	UNKNOWN STEP	  },
+all required checks passed	UNKNOWN STEP	  "docs": {
+all required checks passed	UNKNOWN STEP	    "result": "success",
+all required checks passed	UNKNOWN STEP	    "outputs": {}
+all required checks passed	UNKNOWN STEP	  },
+all required checks passed	UNKNOWN STEP	  "python-package": {
+all required checks passed	UNKNOWN STEP	    "result": "success",
+all required checks passed	UNKNOWN STEP	    "outputs": {}
+all required checks passed	UNKNOWN STEP	  }
+all required checks passed	UNKNOWN STEP	}
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:12.7391846Z ##[endgroup]
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:12.7485571Z cargo-clippy: failure
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:12.7486248Z hawk: failure
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:12.7486906Z cargo-test-linux: failure
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:12.7489419Z cargo-build-msrv: failure
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:12.7510894Z ##[error]Process completed with exit code 1.
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:12.7659424Z Post job cleanup.
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:12.7663987Z ##[start-action display=Run astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2;id=__a365a27c-135a-43b5-9518-b0f62fb5c0e9.__astral-sh_setup-uv]
+all required checks passed	UNKNOWN STEP	2026-11-19T21:36:12.7667938Z ##[end-action id=__a365a27c-135a-43b5-9518-b0f62fb5c0e9.__astral-sh_setup-uv;outcome=skipped;conclusion=skipped;duration_ms=0]

@@ -1,0 +1,17 @@
+Comment on PR	Comment on PR	﻿2026-11-19T22:43:04.1969539Z ##[group]Run node scripts/pr-ci-comment.mjs
+Comment on PR	Comment on PR	2026-11-19T22:43:04.1969874Z [36;1mnode scripts/pr-ci-comment.mjs[0m
+Comment on PR	Comment on PR	2026-11-19T22:43:04.2016867Z shell: /usr/bin/bash -e {0}
+Comment on PR	Comment on PR	2026-11-19T22:43:04.2017082Z env:
+Comment on PR	Comment on PR	2026-11-19T22:43:04.2019443Z   GITHUB_TOKEN: ***
+Comment on PR	Comment on PR	2026-11-19T22:43:04.2019630Z ##[endgroup]
+Comment on PR	Comment on PR	2026-11-19T22:43:04.8415552Z Resolved #101702 for vercel:kassens/hidden-route-layout-router-context at 4ccdf4ecc4de1d19bcdf0820147ae391ff6244cc
+Comment on PR	Comment on PR	2026-11-19T22:43:15.4396887Z Error: GET /repos/vercel/next.js/actions/runs/44624940158/attempts/2/jobs?per_page=100&page=1 failed with 502 (remaining=29937, resource=core, reset=1795131249/2026-11-19T23:34:09.000Z): {
+Comment on PR	Comment on PR	2026-11-19T22:43:15.4397904Z   "message": "Server Error"
+Comment on PR	Comment on PR	2026-11-19T22:43:15.4398165Z }
+Comment on PR	Comment on PR	2026-11-19T22:43:15.4398276Z 
+Comment on PR	Comment on PR	2026-11-19T22:43:15.4398595Z     at GitHubClient.request (file:///home/runner/work/next.js/next.js/scripts/pr-ci-comment.mjs:53:13)
+Comment on PR	Comment on PR	2026-11-19T22:43:15.4399249Z     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+Comment on PR	Comment on PR	2026-11-19T22:43:15.4400011Z     at async GitHubClient.paginate (file:///home/runner/work/next.js/next.js/scripts/pr-ci-comment.mjs:87:20)
+Comment on PR	Comment on PR	2026-11-19T22:43:15.4401026Z     at async handleBuildAndTestWorkflow (file:///home/runner/work/next.js/next.js/scripts/pr-ci-comment.mjs:509:16)
+Comment on PR	Comment on PR	2026-11-19T22:43:15.4404442Z     at async main (file:///home/runner/work/next.js/next.js/scripts/pr-ci-comment.mjs:326:3)
+Comment on PR	Comment on PR	2026-11-19T22:43:15.4468275Z ##[error]Process completed with exit code 1.

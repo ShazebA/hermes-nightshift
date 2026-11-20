@@ -1,0 +1,105 @@
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	﻿2026-11-18T18:59:17.2913750Z Current runner version: '2.338.2'
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T18:59:17.2929150Z ##[group]Runner Image Provisioner
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T18:59:17.2929700Z Hosted Compute Agent
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T18:59:19.4115560Z ##[group]Run echo "$GITHUB_CONTEXT"
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T18:59:19.4117010Z [36;1mecho "$GITHUB_CONTEXT"[0m
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T18:59:19.4175760Z shell: /bin/bash -e {0}
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T18:59:19.5214630Z ##[group]Run actions/checkout@v7.0.1
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T18:59:19.5215170Z with:
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T18:59:19.5215500Z   persist-credentials: false
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T18:59:37.5324000Z ##[group]Run uv run --no-sync bash scripts/test-cov.sh $PYTEST_OPTIONS
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T18:59:37.5324530Z [36;1muv run --no-sync bash scripts/test-cov.sh $PYTEST_OPTIONS[0m
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T18:59:37.5361630Z shell: /bin/bash -e {0}
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T18:59:37.5361830Z env:
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T18:59:37.5362020Z   UV_NO_SYNC: true
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T18:59:37.5362510Z   INLINE_SNAPSHOT_DEFAULT_FLAGS: review
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5933390Z docs_src/additional_responses/tutorial002.py                                                  12      0   100%
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5933650Z docs_src/additional_responses/tutorial001.py                                                  14      0   100%
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5933850Z docs_src/additional_responses/__init__.py                                                      0      0   100%
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5934040Z tests/test_frontend.py                                                                       843      1    99%   583
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5934250Z fastapi/dependencies/utils.py                                                                765      3    99%   239-241, 1510
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5934570Z tests/test_request_params/test_file/test_nullable_and_defaults.py                            170      1    99%   427
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5934800Z fastapi/_compat/v2.py                                                                        223      3    99%   51, 148-150
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5935040Z tests/test_pydantic_v1_error.py                                                               41      1    98%   9
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5935300Z tests/test_union_form_normalization.py                                                       389     12    97%   276-290
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5935800Z tests/test_tutorial/test_debugging/test_tutorial001.py                                        32      1    97%   36
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5936020Z tests/test_forms_multiple_unions.py                                                          380     12    97%   514-530
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5936260Z tests/test_request_params/test_nullable_and_defaults.py                                      511     19    96%   438-463
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5936550Z tests/test_forms_optional_models.py                                                          451     34    92%   597-637
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5936750Z tests/test_query_alias_choices.py                                                            172     14    92%   273-289
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5937010Z tests/test_default_response_class.py                                                         145     17    88%   14-16, 34, 44, 54, 126-129, 141-144, 156-159
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5937200Z fastapi/responses.py                                                                          30      4    87%   65-66, 95-96
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5937420Z docs_src/custom_response/tutorial001b.py                                                       6      1    83%   9
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5937590Z tests/utils.py                                                                                11      2    82%   28-29
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5937810Z tests/test_request_param_model_by_alias.py                                                    83     26    69%   85-115
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5938070Z tests/test_tutorial/test_custom_response/test_tutorial001b.py                                 20     10    50%   17-28
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5938300Z tests/test_stringified_annotation_dependency_py314.py                                         15      9    40%   16-30
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5938590Z tests/test_deprecated_responses.py                                                            53     32    40%   22-30, 35-41, 46-47, 54-62, 67-73, 78-79
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5938900Z tests/test_tutorial/test_custom_response/test_tutorial009c.py                                  8      5    38%   6-13
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5939210Z tests/test_tutorial/test_custom_response/test_tutorial001.py                                  20     15    25%   10-33
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5939470Z docs_src/dependencies/tutorial008.py                                                          17     13    24%   7-11, 15-27
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5939680Z tests/test_orjson_response_class.py                                                           22     19    14%   7-32
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5939900Z docs_src/custom_response/tutorial009c.py                                                      12     12     0%   1-19
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5940100Z docs_src/custom_response/tutorial001.py                                                        6      6     0%   1-9
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5940350Z ------------------------------------------------------------------------------------------------------------------------
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5940550Z TOTAL                                                                                      40579    272    99%
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.5940560Z 
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.7247560Z =========================== short test summary info ============================
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.7249440Z FAILED tests/test_sse.py::test_keepalive_ping_sync - assert 1 == 2
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.7249830Z  +  where 1 = len(['data: {"n": 1}'])
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:38.7250230Z ====== 1 failed, 5238 passed, 49 skipped, 1 xfailed in 118.45s (0:01:58) =======
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:39.1130760Z ##[error]Process completed with exit code 1.
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:39.1406840Z Post job cleanup.
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:39.6219420Z [command]/opt/homebrew/bin/git version
+test (macos-latest, 3.11, lowest-direct, no-deprecation, coverage)	UNKNOWN STEP	2026-11-18T19:01:39.6573430Z git version 2.56.1
+test-alls-green	UNKNOWN STEP	﻿2026-11-18T19:06:44.7252545Z Current runner version: '2.338.2'
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:44.7283068Z ##[group]Runner Image Provisioner
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:44.7284903Z Hosted Compute Agent
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.4684154Z ##[group]Run echo "$GITHUB_CONTEXT"
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.4684982Z [36;1mecho "$GITHUB_CONTEXT"[0m
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.4750150Z shell: /usr/bin/bash -e {0}
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.5492805Z ##[group]Run re-actors/alls-green@v1.3.0
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.5493603Z with:
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.5495290Z   jobs: {
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.5644010Z ##[group]Run python -m normalize_needed_jobs_status \
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.5644965Z [36;1mpython -m normalize_needed_jobs_status \[0m
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.5645923Z [36;1m  "$INPUT_ALLOWED_FAILURES" \[0m
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.5646621Z [36;1m  "$INPUT_ALLOWED_SKIPS" \[0m
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.5647296Z [36;1m  "$INPUT_JOBS"[0m
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.5709545Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.5710369Z env:
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.5710896Z   UV_NO_SYNC: true
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.5711485Z   INLINE_SNAPSHOT_DEFAULT_FLAGS: review
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.5712204Z   INPUT_ALLOWED_FAILURES: []
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.5712977Z   INPUT_ALLOWED_SKIPS: coverage-combine,test,benchmark
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.5714932Z   INPUT_JOBS: {
+test-alls-green	UNKNOWN STEP	  "test": {
+test-alls-green	UNKNOWN STEP	    "result": "failure",
+test-alls-green	UNKNOWN STEP	    "outputs": {}
+test-alls-green	UNKNOWN STEP	  },
+test-alls-green	UNKNOWN STEP	  "coverage-combine": {
+test-alls-green	UNKNOWN STEP	    "result": "skipped",
+test-alls-green	UNKNOWN STEP	    "outputs": {}
+test-alls-green	UNKNOWN STEP	  },
+test-alls-green	UNKNOWN STEP	  "benchmark": {
+test-alls-green	UNKNOWN STEP	    "result": "success",
+test-alls-green	UNKNOWN STEP	    "outputs": {}
+test-alls-green	UNKNOWN STEP	  },
+test-alls-green	UNKNOWN STEP	  "regression-test": {
+test-alls-green	UNKNOWN STEP	    "result": "success",
+test-alls-green	UNKNOWN STEP	    "outputs": {}
+test-alls-green	UNKNOWN STEP	  }
+test-alls-green	UNKNOWN STEP	}
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.5717054Z   PYTHONPATH: /home/runner/work/_actions/re-actors/alls-green/v1.3.0/src
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.5717945Z ##[endgroup]
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.6215132Z # ❌ Some of the required to succeed jobs failed 😢😢😢
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.6215796Z 
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.6216229Z 🛈 Some of the allowed to be skipped jobs did not succeed.
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.6217067Z 🔮 Job statuses:
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.6217966Z [31m❌ test → 🔴 failure [required to succeed or be skipped][0m
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.6219438Z [32m✓ coverage-combine → ⬜ skipped [required to succeed or be skipped][0m
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.6220595Z [32m✓ benchmark → 🟢 success [required to succeed or be skipped][0m
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.6221629Z [32m✓ regression-test → 🟢 success [required to succeed][0m
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.6290874Z ##[error]Process completed with exit code 1.
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.6350851Z ##[end-action id=__re-actors_alls-green.outcome;outcome=failure;conclusion=failure;duration_ms=74]
+test-alls-green	UNKNOWN STEP	2026-11-18T19:06:45.6506478Z Cleaning up orphan processes

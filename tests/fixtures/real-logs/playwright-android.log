@@ -1,0 +1,54 @@
+Android - ubuntu-large	UNKNOWN STEP	﻿2026-11-19T20:51:27.0783153Z Current runner version: '2.338.2'
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T20:51:27.0787158Z Runner name: 'playwright-x64-ubuntu24-64-core-1078517139'
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T20:51:27.0787740Z Runner group name: 'playwright-runners'
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T20:51:28.0651684Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T20:51:28.0652192Z with:
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T20:51:28.0652428Z   repository: microsoft/playwright
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T20:51:29.6906916Z ##[group]Run actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T20:51:29.6907245Z with:
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T20:51:29.6907460Z   distribution: temurin
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T20:53:21.1158875Z ##[group]Run $CI_ENV_EXEC npm run atest
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T20:53:21.1159047Z [36;1m$CI_ENV_EXEC npm run atest[0m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T20:53:21.1172707Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T20:53:21.1172878Z env:
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T20:53:21.1172982Z   FORCE_COLOR: 1
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T20:53:21.1173151Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6618976Z     [2m    at eval (eval at evaluate (:370:30), <anonymous>:7:38)[22m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6619258Z     [2m    at eval (eval at evaluate (:370:30), <anonymous>:1:9)[22m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6619534Z     [2m    at UtilityScript.evaluate (<anonymous>:372:16)[22m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6619800Z     [2m    at UtilityScript.<anonymous> (<anonymous>:1:44)[22m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6619938Z 
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6620339Z [2m    Error Context: test-results/workers-WO-032-should-run--0f7f1-edirected-dedicated-workers-android-page-retry1/error-context.md[22m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6620668Z 
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6621241Z [31m  2) [android-page] › tests/page/elementhandle-scroll-into-view.spec.ts:147:1 › EH-101 should timeout waiting for visible [39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6621515Z 
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6621788Z     Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoContain[2m([22m[32mexpected[39m[2m) // indexOf[22m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6622009Z 
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6622154Z     Expected substring: [32m"element is not visible"[39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6622537Z     Received string:    [31m"elementHandle.scrollIntoViewIfNeeded: Timeout 3000ms exceeded.[39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6622824Z     [31mCall log:[39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6623161Z     [31m[2m  - attempting scroll into view action[22m[39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6623430Z     [31m[2m    - waiting for element to be stable[22m[39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6623633Z     [31m"[39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6623709Z 
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6623960Z      [90m 149 |[39m   [36mconst[39m div [33m=[39m [36mawait[39m page[33m.[39m$([32m'div'[39m)[33m;[39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6624587Z      [90m 150 |[39m   [36mconst[39m error [33m=[39m [36mawait[39m div[33m.[39mscrollIntoViewIfNeeded({ timeout[33m:[39m [35m3000[39m })[33m.[39mcatch(e [33m=>[39m e)[33m;[39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6625302Z     [31m[1m>[22m[39m[90m 151 |[39m   expect(error[33m.[39mmessage)[33m.[39mtoContain([32m'element is not visible'[39m)[33m;[39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6625690Z      [90m     |[39m                         [31m[1m^[22m[39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6626105Z      [90m 152 |[39m   expect(error[33m.[39mmessage)[33m.[39mtoContain([32m'retrying scroll into view action'[39m)[33m;[39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6626443Z      [90m 153 |[39m })[33m;[39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6626614Z      [90m 154 |[39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6626986Z     [2m    at /home/runner/work/playwright/playwright/tests/page/elementhandle-scroll-into-view.spec.ts:151:25[22m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6627258Z 
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6627642Z [2m    Error Context: test-results/elementhandle-scroll-into--42170-timeout-waiting-for-visible-android-page/error-context.md[22m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6627948Z 
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6628025Z [31m  1 failed[39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6628449Z [31m    [android-page] › tests/page/workers.spec.ts:441:1 › WO-032 should run a shared worker after redirected dedicated workers [39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6628789Z [33m  1 flaky[39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6629209Z [33m    [android-page] › tests/page/elementhandle-scroll-into-view.spec.ts:147:1 › EH-101 should timeout waiting for visible [39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6629555Z [33m  323 skipped[39m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:07.6629757Z [32m  2355 passed[39m[2m (41.8m)[22m
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:09.4964559Z ##[error]Process completed with exit code 1.
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:09.4970102Z ##[end-action id=__self.__run_6;outcome=failure;conclusion=failure;duration_ms=2508382]
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:09.4974942Z ##[start-action display=Run tests;id=__self.__run_7]
+Android - ubuntu-large	UNKNOWN STEP	2026-11-19T21:35:09.4977352Z ##[end-action id=__self.__run_7;outcome=skipped;conclusion=skipped;duration_ms=0]

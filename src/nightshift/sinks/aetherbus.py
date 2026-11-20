@@ -64,7 +64,7 @@ def publish_brief(cfg: AetherBusConfig, json_path: Path, brief: dict[str, Any],
         import aetherbus  # noqa: F401
     except ImportError:
         return PublishResult("unavailable", detail="aetherbus is not installed "
-                             "(pip install 'hermes-nightshift[aetherbus]')")
+                             "(pip install -e /path/to/aetherbus)")
     if not broker_reachable(cfg.url):
         return PublishResult("pending", detail=f"broker not reachable at {cfg.url}")
     try:

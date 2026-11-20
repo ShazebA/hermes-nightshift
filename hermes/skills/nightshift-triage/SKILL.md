@@ -71,8 +71,11 @@ Handle the briefs one at a time, in order. Run the `classify:` and `learn:` line
    than 0.15, run the `classify:` line. Otherwise do nothing for this step.
 5. Learn: if the root cause is something that will recur in this repo (a setup step, a missing
    migration, an env var, a known flaky test), run the `learn:` line with a REGEX that matches
-   a stable part of the error line (no SHAs, numbers or timestamps) and a one-line note with the
-   fix. Also save the same fact with `memory` so interactive sessions know it. Skip this step
+   the stable part of the error line and a one-line note with the fix. Put `\S+` where the
+   error names a specific table, column, file or module, so the lesson covers the whole class:
+   `column \S+ does not exist`, not `column entries\.archived_at does not exist`. No SHAs,
+   numbers or timestamps. If the command answers `lesson not saved`, fix the REGEX it names
+   and run it once more; then move on. Also save the same fact with `memory` so interactive sessions know it. Skip this step
    when nothing generalises.
 6. Final reply: one line per brief, `<id>: <category> <confidence> — <six-word reason>`.
    That reply is what gets delivered to the user's chat.

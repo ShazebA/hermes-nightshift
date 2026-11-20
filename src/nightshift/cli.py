@@ -29,7 +29,7 @@ from .pickup import AlreadyClaimed, claim, open_briefs
 from .pipeline import Report, run_once
 from .sandbox import run_repro, strip_checkout
 from .sinks.aetherbus import broker_reachable, publish_brief
-from .state import State, add_lesson, load_lessons
+from .state import State, add_lesson, lesson_problems, load_lessons
 
 WAKE_FALSE = '{"wakeAgent": false}'
 
@@ -163,6 +163,17 @@ def cmd_classify(args, cfg: Config) -> int:
 
 def cmd_learn(args, cfg: Config) -> int:
     cfg.repo(args.repo)
+    sample = None
+    if args.incident:
+        b = load_brief(find_brief(cfg.briefs_dir, args.incident))
+        w = b["what_broke"]
+        sample = "\n".join([*w["log_excerpt"], w["signature"], w.get("error") or ""])
+    errors, warnings = lesson_problems(args.pattern, sample)
+    for w in warnings:
+        print(f"warning: {w}", file=sys.stderr)
+    if errors:
+        print("lesson not saved: " + "; ".join(errors), file=sys.stderr)
+        return 2
     le = add_lesson(cfg.state_dir, args.repo, args.pattern, args.note, incident=args.incident)
     print(f"lesson {le.id} saved for {args.repo}: /{le.pattern}/ → {le.note}")
     return 0
@@ -304,7 +315,7 @@ def cmd_doctor(args, cfg: Config) -> int:
             ok = True
         except ImportError:
             ok = False
-        checks.append(("aetherbus importable", ok, "pip install 'hermes-nightshift[aetherbus]'"))
+        checks.append(("aetherbus importable", ok, "pip install -e /path/to/aetherbus"))
         checks.append(("AetherBus broker reachable", broker_reachable(cfg.aetherbus.url),
                        cfg.aetherbus.url))
     if cfg.sandbox.enabled:

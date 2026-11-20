@@ -94,7 +94,7 @@ def ci_incidents_from_runs(repo: str, branch: str, runs: list[dict[str, Any]],
 
 def _run_ref(r: dict[str, Any]) -> dict[str, Any]:
     return {k: r.get(k) for k in ("databaseId", "headSha", "url", "createdAt", "attempt",
-                                  "displayTitle", "event", "conclusion")}
+                                  "displayTitle", "event", "conclusion", "workflowDatabaseId")}
 
 
 # ------------------------------------------------------------------ deployments
