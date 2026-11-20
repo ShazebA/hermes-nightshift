@@ -2,7 +2,7 @@
 
 Nightshift writes a brief per failure. These integrations let a coding agent go from "a brief exists" to "I'm fixing it" in one step:
 
-- **Pull:** `nightshift next --json` lists unclaimed briefs, newest first. `nightshift claim ID --agent NAME` records who took the brief (`handoff.claimed_by`/`claimed_at`), so two agents don't fix the same thing. If `kanban.enabled`, it also comments on the brief's card and unblocks it.
+- **Pull:** `nightshift next --json` lists unclaimed briefs that have not gone green again, newest first. `nightshift claim ID --agent NAME` records who took the brief (`handoff.claimed_by`/`claimed_at`), so two agents don't fix the same thing. If `kanban.enabled`, it also comments on the brief's card and unblocks it. `claim` exits 1 when the brief is already claimed or already resolved. When your fix goes green, the next poll resolves the brief and completes its card.
 - **Push (optional):** with `aetherbus.enabled: true`, every brief is also published to AetherBus. `aetherbus-mcp` exposes the topic as an MCP resource, so the agent sees new briefs as they land. The event's `dataref` is a `file://` URI to the brief JSON, so the agent needs read access to `briefs_dir`.
 
 The agent needs `nightshift` on its `PATH` and the same config Nightshift uses: `./nightshift.yaml`, `$NIGHTSHIFT_CONFIG`, or `~/.config/nightshift/nightshift.yaml`.

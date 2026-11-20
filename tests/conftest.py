@@ -12,6 +12,7 @@ from nightshift.gh import FixtureGh
 
 FIXTURES = Path(__file__).parent / "fixtures"
 RED_MAIN = FIXTURES / "red-main"
+RECOVERED = FIXTURES / "recovered"
 NOW = datetime(2026, 11, 19, 7, 0, tzinfo=UTC)
 REPO = "acme/webapp"
 
@@ -46,13 +47,23 @@ class FakeHermes:
     def __init__(self):
         self.calls: list[list[str]] = []
         self.n = 0
+        self.status: dict[str, str] = {}
 
     def __call__(self, argv, **kw):
         self.calls.append(argv)
         if "create" in argv:
             self.n += 1
-            out = json.dumps({"id": f"t_{self.n:04d}", "status": "triage"})
+            tid = f"t_{self.n:04d}"
+            self.status[tid] = "blocked"
+            out = json.dumps({"id": tid, "status": "blocked"})
+        elif "show" in argv:
+            tid = argv[argv.index("show") + 1]
+            out = json.dumps({"task": {"id": tid, "status": self.status.get(tid, "blocked")}})
         else:
+            if "complete" in argv:
+                self.status[argv[argv.index("complete") + 1]] = "done"
+            if "unblock" in argv:
+                self.status[argv[-1]] = "ready"
             out = "ok"
         return subprocess.CompletedProcess(argv, 0, stdout=out, stderr="")
 

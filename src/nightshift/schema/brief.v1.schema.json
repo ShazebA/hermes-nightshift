@@ -116,6 +116,19 @@
         "claimed_at": {"type": ["string", "null"], "format": "date-time"}
       }
     },
-    "errors": {"type": "array", "items": {"type": "string"}}
+    "errors": {"type": "array", "items": {"type": "string"}},
+    "resolution": {
+      "type": "object",
+      "description": "Set once the failure has gone green again (optional; absent while open)",
+      "required": ["resolved_at", "how", "sha"],
+      "properties": {
+        "resolved_at": {"type": "string", "format": "date-time"},
+        "how": {"enum": ["fix", "rerun"], "description": "fix: green on a new commit; rerun: the same commit went green"},
+        "sha": {"type": "string", "description": "Commit of the green run or successful deployment"},
+        "url": {"type": ["string", "null"]},
+        "run_id": {"type": ["integer", "null"], "description": "Green run id, or deployment id for deploy_failure"},
+        "green_at": {"type": ["string", "null"], "format": "date-time"}
+      }
+    }
   }
 }

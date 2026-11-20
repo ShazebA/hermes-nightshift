@@ -32,7 +32,8 @@ flowchart LR
 3. **Brief.** It writes one brief per incident to disk as JSON, the canonical copy validated against [a versioned JSON Schema](src/nightshift/schema/brief.v1.schema.json), plus a Markdown rendering. See [docs/brief-schema.md](docs/brief-schema.md).
 4. **Handoff.** It opens a Hermes kanban card with the brief attached, `blocked` by default so no Hermes worker picks it up on its own and, if enabled, publishes a CloudEvent to [AetherBus](https://github.com/ShazebA/aetherbus) whose `dataref` points at the brief JSON (a pointer, not a payload). `aetherbus-mcp` exposes the topic as a live MCP resource, so an MCP client sees new briefs as they land. Each sink is optional, and a sink failure never loses the brief.
 5. **Learn.** The cron prompt wakes the model only when there is a new failure. The `nightshift-triage` skill has the model confirm or override the heuristic (`nightshift classify`) and record repo-specific lessons (`nightshift learn`). Lessons are regexes matched against future failing logs, so the next brief already says, for example, "this repo's CI fails when Supabase migrations aren't applied".
-6. **Digest.** A morning `--no-agent` cron job summarizes the night to whatever gateway Hermes has configured, and also writes it to a file.
+6. **Resolve.** On every poll, open failures are checked against the runs and deployments just fetched. When one goes green again, its brief gets a `resolution` (`fix` when a new commit went green, `rerun` when the same commit did, which points at flakiness), `nightshift next` stops offering it, and its kanban card is completed if it is still `blocked` or was unblocked by `nightshift claim`. A card a Hermes worker is running, or that someone else unblocked, only gets a comment. Only a newer green run counts: an outage or a missing workflow never resolves anything.
+7. **Digest.** A morning `--no-agent` cron job summarizes the night, including what recovered and how, to whatever gateway Hermes has configured, and also writes it to a file.
 
 ### Why a CLI + skill and not a plugin or MCP server
 
@@ -105,7 +106,7 @@ Set `aetherbus.enabled: true`. Add `aetherbus-mcp` to your coding agent's `.mcp.
 | `nightshift learn OWNER/REPO --pattern RE --note TEXT` | Save a lesson that future briefs match against failing logs |
 | `nightshift lessons OWNER/REPO` | List config and learned lessons |
 | `nightshift repro ID [--execute]` | Re-run the brief's repro in a throwaway Docker container (opt-in) |
-| `nightshift next [--repo OWNER/REPO] [--json]` | List unclaimed briefs, newest first (for coding agents) |
+| `nightshift next [--repo OWNER/REPO] [--json]` | List unclaimed, unresolved briefs, newest first (for coding agents) |
 | `nightshift claim ID --agent NAME [--json]` | Mark a brief as taken (`handoff.claimed_by`); comments on and unblocks its kanban card |
 | `nightshift digest [--hours N]` | Summarize everything since the last digest |
 | `nightshift brief show ID` / `brief validate FILE` | Print or validate a brief |
@@ -147,7 +148,7 @@ The config lives at `./nightshift.yaml`, then `$NIGHTSHIFT_CONFIG`, then `~/.con
 
 ## Status
 
-This is alpha. The end-to-end slice (config → poll → triage → brief → kanban → AetherBus) is tested against recorded `gh` fixtures and the real `aetherbus` package. Live runs have covered `gh` polling, the kanban sink and Hermes's cron script runner. Not yet exercised live: the model's half of the cron job, the Docker repro and a running NATS broker. See [CONTRIBUTING.md](CONTRIBUTING.md) to help.
+This is alpha. The end-to-end slice (config → poll → triage → brief → kanban → AetherBus) is tested against recorded `gh` fixtures and the real `aetherbus` package. Live runs have covered `gh` polling, the kanban sink and Hermes's cron script runner. Live runs have also covered the local model working through the skill from a Hermes cron job, a Docker repro, and a publish to a real NATS broker that was then replayed and resolved through AetherBus. Not yet seen live: a failure brief from a real repo's red CI (the triage parser is tested on real public CI logs instead). See [CONTRIBUTING.md](CONTRIBUTING.md) to help.
 
 ## License
 

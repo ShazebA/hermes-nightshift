@@ -11,9 +11,10 @@ from .brief import build_brief, load_brief, write_brief
 from .config import Config
 from .detect import detect_repo
 from .gh import Gh
-from .models import Incident
+from .models import FAILURE_KINDS, Incident
+from .resolve import find_resolution
 from .sinks.aetherbus import publish_brief
-from .sinks.kanban import create_card
+from .sinks.kanban import create_card, resolve_card
 from .state import State, load_lessons
 from .triage import triage
 
@@ -32,11 +33,24 @@ class Handled:
 
 
 @dataclass
+class Resolved:
+    repo: str
+    id: str
+    title: str
+    how: str  # fix | rerun
+    sha: str
+    url: str | None
+    kanban: str = "n/a"  # closed | commented | error | n/a
+    brief_md: Path | None = None
+
+
+@dataclass
 class Report:
     handled: list[Handled] = field(default_factory=list)
     skipped_seen: int = 0
     errors: list[str] = field(default_factory=list)
     republished: list[str] = field(default_factory=list)
+    resolved: list[Resolved] = field(default_factory=list)
     watchers: int = 0  # watcher calls attempted (one per repo x kind, CI once per branch)
 
     @property
@@ -55,10 +69,9 @@ def run_once(cfg: Config, gh: Gh, *, dry_run: bool = False, briefs_dir: Path | N
     state = State(cfg.state_dir)
     out_dir = briefs_dir or cfg.briefs_dir
     report = Report()
-    if not dry_run:
-        _retry_pending(cfg, state, report)
     for repo in cfg.repos:
-        incidents, errors = detect_repo(gh, repo, cfg.lookback_runs, now)
+        observed: dict[str, Any] = {}
+        incidents, errors = detect_repo(gh, repo, cfg.lookback_runs, now, observed=observed)
         report.errors += errors
         report.watchers += sum(len(repo.branches) if k == "ci" else 1 for k in repo.watch)
         lessons = repo.lessons + load_lessons(cfg.state_dir, repo.name)
@@ -86,7 +99,13 @@ def run_once(cfg: Config, gh: Gh, *, dry_run: bool = False, briefs_dir: Path | N
                     "brief_json": _s(h.brief_json), "brief_md": _s(h.brief_md),
                     "kanban_task_id": h.kanban_task_id,
                 })
+        if not dry_run:
+            _resolve_open(cfg, state, repo.name, observed, report, now, kanban_run)
     if not dry_run:
+        # After resolving, so a brief that went green while the broker was down is never
+        # announced; briefs first tried in this pass wait for the next one.
+        fresh = {State.key(h.incident.repo, h.incident.id) for h in report.handled}
+        _retry_pending(cfg, state, report, skip=fresh)
         stamp = (now or datetime.now(UTC)).strftime("%Y-%m-%dT%H:%M:%SZ")
         for e in report.errors:  # surfaced by the digest so a broken watcher can't go unnoticed
             state.append_ledger({"id": "watch-error", "repo": e.split(" ", 1)[0], "kind": "watch_error",
@@ -119,8 +138,14 @@ def _handoff(cfg: Config, h: Handled, kanban_run=None) -> None:
         write_brief(b, h.brief_json.parent.parent)
 
 
-def _retry_pending(cfg: Config, state: State, report: Report) -> None:
+def _retry_pending(cfg: Config, state: State, report: Report, skip: set[str] = frozenset()) -> None:
     for key, rec in state.pending_publish():
+        if key in skip:
+            continue
+        if rec.get("resolved"):
+            # Went green before the broker came back: announcing it now would look like new work.
+            rec["aetherbus"] = "skipped-resolved"
+            continue
         path = Path(rec.get("brief_json") or "")
         if not path.is_file():
             rec["aetherbus"] = "error"
@@ -132,3 +157,41 @@ def _retry_pending(cfg: Config, state: State, report: Report) -> None:
             b["handoff"]["aetherbus_event_id"] = p.event_id
             write_brief(b, path.parent.parent)
             report.republished.append(key)
+
+
+def _resolve_open(cfg: Config, state: State, repo: str, observed: dict[str, Any], report: Report,
+                  now: datetime | None, kanban_run=None) -> None:
+    """Mark open failures of ``repo`` that have gone green: state, brief, ledger row, card."""
+    stamp = (now or datetime.now(UTC)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    prefix = f"{repo}#"
+    for key, rec in state.seen.items():
+        if not key.startswith(prefix) or rec.get("kind") not in FAILURE_KINDS or rec.get("resolved"):
+            continue
+        path = Path(rec.get("brief_json") or "")
+        if not path.is_file():
+            continue
+        b = load_brief(path)
+        res = find_resolution(b, observed)
+        if not res:
+            continue
+        res = {"resolved_at": stamp, **res}
+        b["resolution"] = res
+        b["updated_at"] = stamp
+        _, md = write_brief(b, path.parent.parent)
+        r = Resolved(repo, b["id"], b["title"], res["how"], res["sha"], res.get("url"), brief_md=md)
+        task_id = b["handoff"].get("kanban_task_id")
+        if cfg.kanban.enabled and task_id:
+            what = ("fixed by commit " if res["how"] == "fix" else
+                    "went green on a re-run of the same commit (no code change) at ") + res["sha"][:7]
+            kw = {"run": kanban_run} if kanban_run else {}
+            text = f"Nightshift: {b['title']} {what}. {res.get('url') or ''}".strip()
+            r.kanban, detail = resolve_card(cfg.kanban, task_id, text,
+                                            claimed=bool(b["handoff"].get("claimed_by")), **kw)
+            if detail:
+                rec["kanban_resolution_detail"] = detail
+        rec.update(resolved=stamp, resolution=res["how"], resolved_sha=res["sha"], kanban_resolution=r.kanban)
+        state.append_ledger({"id": b["id"], "repo": repo, "kind": "resolved", "title": b["title"],
+                             "url": res.get("url") or "", "detected_at": stamp,
+                             "failure_kind": b["kind"], "how": res["how"], "sha": res["sha"],
+                             "brief_md": str(md), "kanban_task_id": task_id})
+        report.resolved.append(r)

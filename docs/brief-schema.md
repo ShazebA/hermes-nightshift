@@ -9,6 +9,7 @@ Files live at `<briefs_dir>/<owner>__<repo>/<id>.json` and `.md`. Both are writt
 - `schema` is the literal `nightshift.brief/v1`.
 - **Additive** changes, such as new optional fields or new link labels, keep `v1`. Consumers must ignore fields they don't know.
 - **Breaking** changes, such as renaming or removing a field, changing a type, or adding an enum value a strict consumer would reject, bump to `v2`. They ship a new schema file, and `v1` stays readable for one minor release.
+- `resolution` was added this way: optional, so v1 consumers that don't know it keep working. Resolving rewrites the brief file in place (as `claim` does), so an AetherBus `dataref` resolves to the current state.
 - AetherBus events carry the version in the `nightshift-schema` header, so subscribers can filter.
 
 ## Fields
@@ -48,6 +49,13 @@ Files live at `<briefs_dir>/<owner>__<repo>/<id>.json` and `.md`. Both are writt
 | `handoff.claimed_by` | string? | Coding agent that picked the brief up (`nightshift claim`); unclaimed briefs are what `nightshift next` lists |
 | `handoff.claimed_at` | date-time? | When it was claimed |
 | `errors[]` | string[] | Triage gaps, for example a log that could not be fetched |
+| `resolution` | object? | Absent while the failure is open. Set once by a later poll that sees it green again |
+| `resolution.resolved_at` | date-time | When Nightshift noticed |
+| `resolution.how` | `fix` \| `rerun` | `fix`: a different commit went green (likely the fix). `rerun`: a commit that was red went green with no code change |
+| `resolution.sha` | string | Commit of the green run or successful deployment |
+| `resolution.url` | string? | That run or deployment |
+| `resolution.run_id` | integer? | Run id, or deployment id for `deploy_failure` |
+| `resolution.green_at` | date-time? | When the green run or deployment started |
 
 ## Classification heuristic
 

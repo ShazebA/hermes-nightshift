@@ -140,6 +140,12 @@ def validate(brief: dict[str, Any]) -> list[str]:
     claimed_by = brief["handoff"].get("claimed_by")
     if claimed_by is not None and (not isinstance(claimed_by, str) or not claimed_by):
         errs.append("handoff.claimed_by must be a non-empty string or null")
+    res = brief.get("resolution")
+    if res is not None:
+        if not isinstance(res, dict) or res.get("how") not in ("fix", "rerun"):
+            errs.append("resolution.how must be fix or rerun")
+        elif not res.get("sha") or not res.get("resolved_at"):
+            errs.append("resolution needs sha and resolved_at")
     return errs
 
 
@@ -165,6 +171,13 @@ def render_markdown(b: dict[str, Any]) -> str:
         "",
         "## What broke", "", w["summary"], "",
     ]
+    res = b.get("resolution")
+    if res:
+        how = ("fixed by a new commit" if res["how"] == "fix"
+               else "went green on a re-run of the same commit (no code change)")
+        out[out.index("## What broke"):out.index("## What broke")] = [
+            f"> **Resolved** {res['resolved_at']}: {how}, {_sha(res['sha'])}"
+            + (f" ({res['url']})" if res.get("url") else "") + ".", ""]
     for label, key in (("Workflow", "workflow"), ("Environment", "environment"), ("Job", "job"),
                        ("Step", "step"), ("Failing test", "test_target"), ("Error", "error"),
                        ("Run", "run_url")):
