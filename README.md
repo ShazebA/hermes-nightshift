@@ -149,7 +149,7 @@ The config lives at `./nightshift.yaml`, then `$NIGHTSHIFT_CONFIG`, then `~/.con
 
 ## Status
 
-This is alpha. The end-to-end slice (config → poll → triage → brief → kanban → AetherBus) is tested against recorded `gh` fixtures and the real `aetherbus` package. Live runs have covered `gh` polling, the kanban sink and Hermes's cron script runner. Live runs have also covered the local model working through the skill from a Hermes cron job, a Docker repro, and a publish to a real NATS broker that was then replayed and resolved through AetherBus. Read-only polls of public repos with red CI (uv, deno, pydantic, playwright) produced six schema-valid briefs, and the bugs they exposed are fixed with trimmed copies of those logs as regression tests. Not yet seen live: a red CI run on a repo you own. See [CONTRIBUTING.md](CONTRIBUTING.md) to help.
+This is alpha. The end-to-end slice (config → poll → triage → brief → kanban → AetherBus) is tested against recorded `gh` fixtures and the real `aetherbus` package. Live runs have covered `gh` polling, the kanban sink and Hermes's cron script runner. Live runs have also covered the local model working through the skill from a Hermes cron job, a Docker repro, and a publish to a real NATS broker that was then replayed and resolved through AetherBus. Read-only polls of public repos with red CI (uv, deno, pydantic, playwright) produced six schema-valid briefs, and the bugs they exposed are fixed with trimmed copies of those logs as regression tests. A private canary repo with CI broken on purpose has run the whole loop live: red CI, brief, blocked kanban card, `claim`, fix pushed, resolution as `fix`, card completed, digest. See [CONTRIBUTING.md](CONTRIBUTING.md) to help.
 
 ## License
 

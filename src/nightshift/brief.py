@@ -38,7 +38,7 @@ def build_brief(incident: Incident, t: Triage, now: str | None = None) -> dict[s
     where = d.get("workflow") if ci else f"deploy to {d.get('environment')}"
     summary = (f"{where} is red on {d.get('branch') or d.get('ref')}"
                + (f" ({d.get('red_streak')} failing run(s) in a row)" if ci else "")
-               + (f": {t.digest.signature.rstrip('.')}" if t.digest.signature else "")
+               + (f": {(t.digest.headline or t.digest.signature).rstrip('.')}" if t.digest.signature else "")
                + (f" ({t.digest.error.rstrip('.')})" if t.digest.error
                   and normalize(t.digest.error) not in t.digest.signature else "")) + "."
     brief: dict[str, Any] = {

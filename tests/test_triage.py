@@ -151,3 +151,22 @@ def test_heredoc_delimiter_never_collides_with_the_script():
     d = LogDigest(command="cat <<NIGHTSHIFT_STEP\nhi\nNIGHTSHIFT_STEP")
     r = repro_command(d, "abc", RepoConfig(name="o/r"))
     assert r.startswith("git checkout abc && bash -e <<'NIGHTSHIFT_STEP_'\n") and r.endswith("\nNIGHTSHIFT_STEP_")
+
+
+def test_summary_keeps_the_values_the_signature_masks():
+    from nightshift.triage import parse_failed_log
+    log = "\n".join(f"test\tUNKNOWN STEP\t2026-11-20T04:49:00.0000000Z {ln}" for ln in [
+        "##[group]Run python -m pytest -q", "##[endgroup]",
+        "E       assert 60.01 == 60.0",
+        "FAILED tests/test_pricing.py::test_discount - assert 60.01 == 60.0",
+        "##[error]Process completed with exit code 1."])
+    d = parse_failed_log(log)
+    assert d.signature == "FAILED tests/test_pricing.py::test_discount - assert N == N"
+    assert d.headline == "FAILED tests/test_pricing.py::test_discount - assert 60.01 == 60.0"
+
+
+def test_pytest_test_file_pairs_with_its_module():
+    from nightshift.triage import suspected_files
+    s = suspected_files(["canary/pricing.py", "README.md"], [], "tests/test_pricing.py::test_discount")
+    assert s[0] == {"path": "canary/pricing.py", "score": 2,
+                    "reason": "source/test pair of a file named in the failing log"}

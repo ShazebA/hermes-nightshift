@@ -74,7 +74,8 @@ class LogDigest:
     action: str = ""  # set when the failing step is an action (`uses:`), not a script
     env: list[str] = field(default_factory=list)  # names (not values) from the step's env block
     excerpt: list[str] = field(default_factory=list)
-    signature: str = ""
+    signature: str = ""  # normalized, stable across runs
+    headline: str = ""  # the same line as printed, for people (keeps "60.01 == 60.0")
     error: str = ""
     aggregator: bool = False  # only a roll-up job failed; the real failure is elsewhere in the run
     segment: list[str] = field(default_factory=list)  # failing step's lines, cut at the error
@@ -117,7 +118,8 @@ def parse_failed_log(text: str) -> LogDigest:
             if not ln.startswith(("##[start-action", "##[end-action"))]
     d.segment = body
     d.excerpt = _excerpt(body)
-    d.signature = signature(body)
+    d.headline = signature_line(body)
+    d.signature = normalize(d.headline)
     d.error = first_error(body)
     for rx, runner in TEST_LOCATORS:
         m = next((rx.search(ln) for ln in body if rx.search(ln)), None)
@@ -236,19 +238,25 @@ def normalize(line: str) -> str:
     return re.sub(r"\s+", " ", s).strip()[:160]
 
 
-def signature(lines: list[str]) -> str:
+def signature_line(lines: list[str]) -> str:
+    """The line that best says what failed, as printed (whitespace collapsed)."""
     for pat in SIGNATURE_PATTERNS:
         rx = re.compile(pat)
         for ln in lines:
             m = rx.search(ln)
             if m:
-                return normalize(m.group(0))
+                return re.sub(r"\s+", " ", m.group(0)).strip()[:200]
     # Only the generic "Process completed with exit code N": use the last real line before it.
     meaningful = [ln for ln in lines if ln.strip() and not ln.startswith("##[")
                   and not re.fullmatch(r"[\s=\-_*#]+", ln) and not ln.startswith(POST_JOB)]
     if meaningful:
-        return normalize(meaningful[-1])
-    return normalize(lines[-1]) if lines else ""
+        return re.sub(r"\s+", " ", meaningful[-1]).strip()[:200]
+    return re.sub(r"\s+", " ", lines[-1]).strip()[:200] if lines else ""
+
+
+def signature(lines: list[str]) -> str:
+    """Normalized signature (numbers and SHAs masked) for dedupe and lesson matching."""
+    return normalize(signature_line(lines))
 
 
 ERROR_RE = re.compile(r"\b(\w*Error|\w*Exception|error TS\d+):\s.*")
@@ -339,7 +347,8 @@ def suspected_files(changed: list[str], log_paths: list[str], test_target: str) 
 
 def _stem(p: str) -> str:
     name = PurePosixPath(p.split("::")[0]).name
-    return re.sub(r"(\.(test|spec))?\.[^.]+$", "", name)
+    name = re.sub(r"(\.(test|spec))?\.[^.]+$", "", name)
+    return re.sub(r"^test_|_test$", "", name)  # pytest/go style: test_pricing.py <-> pricing.py
 
 
 def is_github_managed(incident: Incident) -> bool:
@@ -454,6 +463,7 @@ def triage(gh: Gh, incident: Incident, repo: RepoConfig, lessons: list[Lesson]) 
         base, head = d.get("last_success_sha"), d["sha"]
     digest = parse_failed_log(log_text) if incident.kind == "ci_failure" else LogDigest(
         excerpt=[log_text] if log_text else [], signature=normalize(log_text),
+        headline=re.sub(r"\s+", " ", log_text).strip()[:200],
         paths=extract_paths([log_text]))
     try:
         # GitHub-managed workflows don't build the repo's code, so a commit range would blame noise.
