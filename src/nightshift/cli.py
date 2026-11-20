@@ -130,7 +130,8 @@ def cmd_tick(args, cfg: Config) -> int:
         print(WAKE_FALSE)
         return 0
     print(f"NIGHTSHIFT: {len(report.new_failures)} new failure brief(s). For each id below, "
-          "follow the nightshift-triage skill. Run the printed commands exactly, replacing only "
+          "follow the nightshift-triage skill. Always run its classify: line; run learn: only for a "
+          "recurring repo cause, not a code bug. Run the printed commands exactly, replacing only "
           "the CAPITALISED placeholders.")
     for line in _summary(report, self_command(cfg)):
         print(line)
@@ -173,6 +174,10 @@ def cmd_learn(args, cfg: Config) -> int:
     sample = None
     if args.incident:
         b = load_brief(find_brief(cfg.briefs_dir, args.incident))
+        if b["classification"].get("source") == "heuristic":
+            print(f"lesson not saved: classify {args.incident} first (run its classify: line), "
+                  "then decide whether anything generalises", file=sys.stderr)
+            return 2
         w = b["what_broke"]
         sample = "\n".join([*w["log_excerpt"], w["signature"], w.get("error") or ""])
     errors, warnings = lesson_problems(args.pattern, sample)
@@ -181,8 +186,12 @@ def cmd_learn(args, cfg: Config) -> int:
     if errors:
         print("lesson not saved: " + "; ".join(errors), file=sys.stderr)
         return 2
+    before = {x.id: x.pattern for x in load_lessons(cfg.state_dir, args.repo)}
     le = add_lesson(cfg.state_dir, args.repo, args.pattern, args.note, incident=args.incident)
-    print(f"lesson {le.id} saved for {args.repo}: /{le.pattern}/ → {le.note}")
+    verb = "updated" if le.id in before else "saved"
+    print(f"lesson {le.id} {verb} for {args.repo}: /{le.pattern}/ → {le.note}")
+    if verb == "updated" and args.incident:
+        print(f"(one lesson per incident: this replaced {le.id} for {args.incident})")
     return 0
 
 
