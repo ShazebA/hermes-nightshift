@@ -88,9 +88,8 @@ The installer prints the `hermes cron create` commands for the watch and digest 
 ### Optional: AetherBus
 
 ```bash
-git clone https://github.com/ShazebA/aetherbus.git /path/to/aetherbus
-pip install -e /path/to/aetherbus          # into the same environment as nightshift
-(cd /path/to/aetherbus && docker compose up -d nats)
+pip install -e ".[aetherbus]"              # AetherBus + aetherbus-mcp, pinned to a tested commit
+docker run -d --name nats -p 4222:4222 nats:2 -js   # or `docker compose up -d nats` in an aetherbus clone
 aetherbus-mcp serve --topic dev.aetherbus.nightshift.brief.v1
 ```
 

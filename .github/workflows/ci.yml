@@ -31,3 +31,21 @@ jobs:
           cp config.example.yaml nightshift.yaml
           nightshift poll --dry-run --fixtures tests/fixtures/red-main
           nightshift brief validate nightshift-dry-run/your-org__your-app/ci-ci-main-9002.json
+
+  aetherbus:
+    # Installs the git-pinned [aetherbus] extra and runs the contract test against the real
+    # package, so a bad pin fails here instead of being skipped.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - name: Install with the AetherBus extra
+        run: python -m pip install -e ".[dev,aetherbus]"
+      - name: Contract test (must not skip)
+        run: |
+          python -c "import aetherbus, aetherbus.mcp_adapter"
+          aetherbus-mcp --help > /dev/null
+          pytest tests/test_aetherbus_contract.py -rs | tee out.txt
+          ! grep -q SKIPPED out.txt

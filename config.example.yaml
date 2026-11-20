@@ -38,7 +38,7 @@ kanban:
   hermes_bin: hermes
 
 aetherbus:
-  enabled: false         # optional; needs `pip install -e /path/to/aetherbus`
+  enabled: false         # optional; needs `pip install -e ".[aetherbus]"`
   url: nats://localhost:4222
   # Must sit under AetherBus's default stream subjects (aetherbus.> or dev.aetherbus.>).
   topic: dev.aetherbus.nightshift.brief.v1
