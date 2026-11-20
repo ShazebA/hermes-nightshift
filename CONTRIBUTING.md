@@ -11,7 +11,7 @@ pytest
 ruff check src tests
 ```
 
-To run the AetherBus contract test, install AetherBus into the same venv (`pip install -e /path/to/aetherbus`). Without it the test is skipped.
+To run the AetherBus contract test, install the extra (`pip install -e ".[dev,aetherbus]"`). Without it the test is skipped.
 
 ## Ground rules
 

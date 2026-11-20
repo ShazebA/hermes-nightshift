@@ -24,8 +24,9 @@ classifiers = [
 dependencies = ["pyyaml>=6.0,<7"]
 
 [project.optional-dependencies]
-# AetherBus (optional sink) is not on PyPI and its wheel build needs a built Replay UI, so it is
-# installed separately from a clone: `pip install -e /path/to/aetherbus` (see README).
+# AetherBus (optional sink) is not on PyPI; pinned to a commit whose wheel builds from a clean
+# git checkout (ShazebA/aetherbus#12). [mcp] brings `aetherbus-mcp` for coding agents.
+aetherbus = ["aetherbus[mcp] @ git+https://github.com/ShazebA/aetherbus.git@a64f324bc28454fb2eea8bd86987ed6550385d54"]
 dev = ["pytest>=8,<10", "jsonschema>=4.21,<5", "ruff>=0.6,<0.16"]
 
 [project.scripts]
@@ -33,6 +34,9 @@ nightshift = "nightshift.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/ShazebA/hermes-nightshift"
+
+[tool.hatch.metadata]
+allow-direct-references = true  # the git-pinned [aetherbus] extra
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/nightshift"]
