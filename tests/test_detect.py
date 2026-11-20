@@ -111,3 +111,23 @@ def test_deploy_walk_stops_at_last_success(gh):
     found, errors = detect_repo(gh, RepoConfig(name=REPO, watch=["deployments"]), now=NOW)
     assert errors == [] and [i.id for i in found] == ["deploy-production-501"]
     assert not any("/deployments/499/" in c for c in gh.calls)
+
+
+def test_ignored_workflows_get_no_incident_but_stay_visible_for_resolution(gh):
+    observed = {}
+    repo = RepoConfig(name=REPO, watch=["ci"], ignore_workflows=["e2E", "Lint*"])
+    found, errors = detect_repo(gh, repo, now=NOW, observed=observed)
+    assert errors == [] and {i.id for i in found} == {"ci-ci-main-9002"}
+    assert any(r["workflowName"] == "E2E" for r in observed["ci"]["main"])
+
+
+def test_ignore_workflows_must_be_a_list_of_names():
+    from pathlib import Path
+
+    import pytest
+
+    from nightshift.config import ConfigError, parse_config
+    with pytest.raises(ConfigError, match="ignore_workflows"):
+        parse_config({"repos": [{"name": "o/r", "ignore_workflows": "Dependabot Updates"}]}, Path("."))
+    cfg = parse_config({"repos": [{"name": "o/r", "ignore_workflows": ["Dependabot *"]}]}, Path("."))
+    assert cfg.repos[0].ignores("dependabot updates") and not cfg.repos[0].ignores("CI")

@@ -129,6 +129,7 @@ The config lives at `./nightshift.yaml`, then `$NIGHTSHIFT_CONFIG`, then `~/.con
 | `repos[].path` | none | Local clone used by `repro` (otherwise cloned from GitHub) |
 | `repos[].repro_setup` | none | Prepended to repro commands, for example `npm ci` |
 | `repos[].build_command` | none | Repro command for failed deployments |
+| `repos[].ignore_workflows` | `[]` | Workflow names or globs (case-insensitive) whose failures are never briefed, e.g. `Dependabot Updates` |
 | `repos[].stale_branch_days` | `30` | Idle age that makes a branch stale |
 | `repos[].lessons[]` | `[]` | `{pattern, note}` static hints |
 | `repos[].sandbox_image` | `sandbox.image` | Per-repo image |
