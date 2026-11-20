@@ -110,7 +110,7 @@ Set `aetherbus.enabled: true`. Add `aetherbus-mcp` to your coding agent's `.mcp.
 | `nightshift claim ID --agent NAME [--json]` | Mark a brief as taken (`handoff.claimed_by`); comments on and unblocks its kanban card |
 | `nightshift digest [--hours N]` | Summarize everything since the last digest |
 | `nightshift brief show ID` / `brief validate FILE` | Print or validate a brief |
-| `nightshift doctor` | Check `gh`, `hermes`, AetherBus and Docker |
+| `nightshift doctor [--no-hermes]` | Check `gh`, AetherBus, Docker, and the Hermes side: gateway up, cron jobs registered, skill installed, model server reachable. Prints which config file it loaded |
 
 To hand briefs to Claude Code, Codex or Cursor (a `/nightshift-fix` slash command plus MCP wiring), see [integrations/](integrations/README.md).
 
