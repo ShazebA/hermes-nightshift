@@ -17,6 +17,7 @@ repos:
     repro_setup: npm ci                # prepended to every repro command
     build_command: npm run build       # how to reproduce a failed deployment
     stale_branch_days: 30
+    # ignore_workflows: ["Dependabot Updates", "Diagnose *"]  # names or globs; never briefed
     # sandbox_image: node:22-bookworm  # per-repo override of sandbox.image
     lessons:                           # static hints; learned ones live in <state_dir>/lessons/
       - pattern: '(column|relation) \S+ does not exist'

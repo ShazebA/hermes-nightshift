@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import fnmatch
 import os
 import re
 from dataclasses import dataclass, field
@@ -40,6 +41,12 @@ class RepoConfig:
     sandbox_image: str | None = None
     stale_branch_days: int = 30
     lessons: list[Lesson] = field(default_factory=list)
+    # Workflow names or shell-style globs (case-insensitive) whose failures are not briefed,
+    # e.g. "Dependabot Updates" or "Diagnose *".
+    ignore_workflows: list[str] = field(default_factory=list)
+
+    def ignores(self, workflow: str) -> bool:
+        return any(fnmatch.fnmatchcase(workflow.lower(), p.lower()) for p in self.ignore_workflows)
 
     @property
     def slug(self) -> str:
@@ -126,6 +133,9 @@ def parse_config(data: dict[str, Any], base: Path) -> Config:
         bad = set(watch) - set(WATCH_KINDS)
         if bad:
             raise ConfigError(f"repos[{i}].watch has unknown kinds {sorted(bad)}; use {WATCH_KINDS}")
+        ignore = r.get("ignore_workflows") or []
+        if not isinstance(ignore, list) or not all(isinstance(x, str) and x.strip() for x in ignore):
+            raise ConfigError(f"repos[{i}].ignore_workflows must be a list of workflow names or globs")
         repos.append(
             RepoConfig(
                 name=name,
@@ -137,6 +147,7 @@ def parse_config(data: dict[str, Any], base: Path) -> Config:
                 sandbox_image=r.get("sandbox_image"),
                 stale_branch_days=int(r.get("stale_branch_days", 30)),
                 lessons=_lessons(r.get("lessons")),
+                ignore_workflows=[x.strip() for x in ignore],
             )
         )
     k = data.get("kanban") or {}

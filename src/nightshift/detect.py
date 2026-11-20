@@ -232,7 +232,9 @@ def detect_repo(gh: Gh, repo: RepoConfig, lookback: int = 30,
             def ci(b=b):
                 runs = gh.json(["run", "list", "-R", name, "--branch", b, "-L", str(lookback),
                                 "--json", RUN_FIELDS], name) or []
-                incs = ci_incidents_from_runs(name, b, runs, now)
+                # Ignored workflows get no new incidents; resolution still sees every run.
+                incs = ci_incidents_from_runs(
+                    name, b, [r for r in runs if not repo.ignores(r.get("workflowName") or "")], now)
                 obs.setdefault("ci", {})[b] = runs
                 return incs
             guarded(f"ci[{b}]", ci)
