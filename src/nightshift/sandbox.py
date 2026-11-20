@@ -37,7 +37,9 @@ def strip_checkout(command: str) -> tuple[str | None, str]:
 def run_repro(brief: dict[str, Any], repo: RepoConfig, cfg: SandboxConfig,
               run=subprocess.run) -> dict[str, Any]:
     sha, inner = strip_checkout(brief["repro"]["command"])
-    sha = sha or brief["culprit"]["first_red_sha"]
+    if sha is None:
+        raise ValueError("repro command does not start with `git checkout <sha> && `; "
+                         "it is not a local repro")
     source = repo.path or f"https://github.com/{repo.name}.git"
     image = repo.sandbox_image or cfg.image
     with tempfile.TemporaryDirectory(prefix="nightshift-repro-") as tmp:

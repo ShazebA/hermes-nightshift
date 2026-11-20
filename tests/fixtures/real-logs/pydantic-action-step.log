@@ -1,0 +1,39 @@
+upload-previews	UNKNOWN STEP	﻿2026-11-20T02:36:16.3844325Z Current runner version: '2.338.2'
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:16.3863990Z ##[group]Runner Image Provisioner
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:16.3864921Z Hosted Compute Agent
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5785527Z ##[group]Run dawidd6/action-download-artifact@eab87c9830c39eff17e5a6eadb20bfb4bc880477
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5785895Z with:
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5786062Z   workflow: ci.yml
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5786258Z   commit: 682affdd088751a0ab54b0b5f32ce76bb9d45de7
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5788107Z   github_token: ***
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5788302Z   workflow_search: false
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5788509Z   workflow_conclusion: success
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5788720Z   repo: pydantic/pydantic
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5788915Z   name_is_regexp: false
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5789096Z   path: ./
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5789278Z   allow_forks: false
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5789456Z   check_artifacts: false
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5789641Z   search_artifacts: false
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5789816Z   skip_unpack: false
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5789985Z   dry_run: false
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5790156Z   if_no_artifact_found: fail
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5790352Z   use_unzip: false
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5790522Z   merge_multiple: false
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5790728Z env:
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5790937Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.16/x64
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5791274Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.16/x64/lib/pkgconfig
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5791602Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5791901Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5792195Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5792490Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.16/x64/lib
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:27.5792746Z ##[endgroup]
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:28.4190499Z ==> Repository: pydantic/pydantic
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:28.4191087Z ==> Artifact name: 
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:28.4191740Z ==> Local path: ./
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:28.4191931Z ==> Workflow name: ci.yml
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:28.4192139Z ==> Workflow conclusion: success
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:28.4192386Z ==> Commit: 682affdd088751a0ab54b0b5f32ce76bb9d45de7
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:28.4192632Z ==> Allow forks: false
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:30.9072872Z ==> Skipping run from fork: Toraastrta/pydantic
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:30.9092887Z ##[error]no matching workflow run found with any artifacts?
+upload-previews	UNKNOWN STEP	2026-11-20T02:36:30.9306181Z Cleaning up orphan processes
